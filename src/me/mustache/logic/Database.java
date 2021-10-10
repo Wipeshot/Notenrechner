@@ -67,12 +67,14 @@ public class Database {
         }
     }
 
-    public ArrayList<Integer> getNotenSchriftlich(int fachId, int schuelerId){
+    public ArrayList<Integer> getNotenSchriftlich(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND prognose = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -80,6 +82,8 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 1);
+            pstmt.setInt(4,0);
+            pstmt.setInt(5, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
@@ -109,12 +113,14 @@ public class Database {
         }
     }
 
-    public ArrayList<Integer> getNotenMuendlich(int fachId, int schuelerId){
+    public ArrayList<Integer> getNotenMuendlich(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND prognose = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -122,6 +128,8 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 2);
+            pstmt.setInt(4,0);
+            pstmt.setInt(5, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
@@ -144,6 +152,7 @@ public class Database {
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
             ResultSet rs = pstmt.executeQuery();
+
             return rs.getFloat(1);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -151,12 +160,14 @@ public class Database {
         }
     }
 
-    public ArrayList<Integer> getNotenZusatz(int fachId, int schuelerId){
+    public ArrayList<Integer> getNotenZusatz(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND prognose = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -164,6 +175,8 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
+            pstmt.setInt(4,0);
+            pstmt.setInt(5, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;

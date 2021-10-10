@@ -6,9 +6,6 @@ import me.mustache.logic.Notenrechner;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -47,9 +44,11 @@ public class Gui extends JFrame {
 
     //Fachinfo
     JPanel fachinfo = new JPanel();
-    JTable einzelNoten;
-    DefaultTableModel einzelNote = new DefaultTableModel();
-    JScrollPane notenScroll = new JScrollPane();
+    JButton goBackToFaecherInfo = new JButton("Zurück zur Übersicht");
+    JPanel panelNoteSchriftlich = new JPanel();
+    JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
+    JLabel[] schriftlichEinzelNoten;
+
 
 
 
@@ -217,21 +216,51 @@ public class Gui extends JFrame {
     private void setupFachinfo(int fachId, int schuelerId){
         this.remove(faecherinfo);
 
-        einzelNoten.setBounds(0,50,1280,400);
+        goBackToFaecherInfo.setBounds(this.getBounds().width-200,userinfo.getBounds().height, 200,50);
+        goBackToFaecherInfo.addActionListener(e -> {
+            this.add(faecherinfo);
+            this.remove(goBackToFaecherInfo);
+            this.remove(panelNoteSchriftlich);
+            for(ActionListener act : goBackToFaecherInfo.getActionListeners()) {
+                goBackToFaecherInfo.removeActionListener(act);
+            }
+            this.repaint();
+        });
 
-        einzelNote.addColumn("Schriftlich");
-        einzelNote.addColumn("Muendlich");
-        einzelNote.addColumn("Zusatz");
+        panelNoteSchriftlich.setBounds(this.getBounds().width/100, userinfo.getBounds().height*2, (int) (this.getBounds().width/2.5), this.getBounds().height/5);
+        panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
+        panelNoteSchriftlich.setLayout(new GridLayout(5,1));
+        setupNoteSchriftlichForFach(fachId,schuelerId,1);
 
-        /*for (String str : db.getNotenSchriftlich(fachId, schuelerId)){
-            einzelNote.
-        }*/
+        panelNoteSchriftlich.add(schriftlichSchriftzugTable);
+        schriftlichSchriftzugTable.setVisible(true);
 
-        einzelNoten = new JTable(einzelNote);
-        einzelNoten.add(notenScroll);
-        einzelNoten.setVisible(true);
-        this.add(einzelNoten);
 
+        goBackToFaecherInfo.setVisible(true);
+        this.add(goBackToFaecherInfo);
+        panelNoteSchriftlich.setVisible(true);
+        this.add(panelNoteSchriftlich);
+
+
+
+
+        this.repaint();
+    }
+
+
+    private void setupNoteSchriftlichForFach(int fachId, int schuelerId, int halbjahr){
+        ArrayList<Integer> notenSchriftlichList = db.getNotenSchriftlich(fachId, schuelerId, halbjahr);
+
+        this.schriftlichEinzelNoten = new JLabel[notenSchriftlichList.size()];
+
+        for(int i=0; i < notenSchriftlichList.size(); i++){
+
+            this.schriftlichEinzelNoten[i] = new JLabel();
+
+            this.schriftlichEinzelNoten[i].setText(String.valueOf(notenSchriftlichList.get(i)));
+            this.panelNoteSchriftlich.add(this.schriftlichEinzelNoten[i]);
+            this.schriftlichEinzelNoten[i].setVisible(true);
+        }
     }
 
 }
