@@ -157,9 +157,9 @@ public class Gui extends JFrame {
 
         for (int i = 0; i< nr.getAnzFaecherBySchuelerId(schuelerId); i++){
             fach[i] = new JLabel(db.getFachById(faecherIds.get(i)));
-            schriftlich[i] = new JLabel(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerId)));
-            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId)));
-            zusatz[i] = new JLabel(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerId)));
+            schriftlich[i] = new JLabel(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerId, 1)));
+            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId,1)));
+            zusatz[i] = new JLabel(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerId, 1)));
             endnote[i] = new JLabel(String.valueOf(nr.calculateGrades(faecherIds.get(i), schuelerId)));
             wertung[i] = new JButton("Umschalten");
             fachansicht[i] = new JButton("Mehr Informationen");
@@ -186,9 +186,9 @@ public class Gui extends JFrame {
     }
 
     private void setupNote(int fachId, int schuelerId, int arrayPlace){
-        schriftlich[arrayPlace].setText(String.valueOf(db.getAvgNoteSchriftlich(fachId, schuelerId)));
-        muendlich[arrayPlace].setText(String.valueOf(db.getAvgNoteMuendlich(fachId, schuelerId)));
-        zusatz[arrayPlace].setText(String.valueOf(db.getAvgNoteZusatz(fachId, schuelerId)));
+        schriftlich[arrayPlace].setText(String.valueOf(db.getAvgNoteSchriftlich(fachId, schuelerId, 1)));
+        muendlich[arrayPlace].setText(String.valueOf(db.getAvgNoteMuendlich(fachId, schuelerId, 1)));
+        zusatz[arrayPlace].setText(String.valueOf(db.getAvgNoteZusatz(fachId, schuelerId, 1)));
 
         for (ActionListener act :  wertung[arrayPlace].getActionListeners()){
             wertung[arrayPlace].removeActionListener(act);

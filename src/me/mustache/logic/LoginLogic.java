@@ -8,6 +8,11 @@ public class LoginLogic {
 
     }
 
+    /**
+     * @param username
+     * @param password
+     * @return - true if the param password equals the password in Database; false if not
+     */
     public boolean checkPassword(String username, String password){
         String rightPassword = db.getPasswordByUsername(username);
         return (password.equals(rightPassword));

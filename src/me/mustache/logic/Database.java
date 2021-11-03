@@ -29,11 +29,15 @@ public class Database {
         }
     }
 
+
+    /**
+     * @param fileName - name of the file (without .db)
+     *
+     * Creates an Database file if not exists
+     *
+     */
     public void createNewDatabase(String fileName) {
-
-
         url = "jdbc:sqlite:database/" + fileName + ".db";
-
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
@@ -41,24 +45,30 @@ public class Database {
                 System.out.println("Datenbank ist erstellt.");
                 stmt = conn.createStatement();
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public float getAvgNoteSchriftlich(int fachId, int schuelerId) {
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @return - Average written grade
+     */
+    public float getAvgNoteSchriftlich(int fachId, int schuelerId, int halbjahr) {
         String avgNote = "SELECT AVG (note)\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 1);
+            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1);
         } catch (SQLException e) {
@@ -67,6 +77,12 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @param halbjahr - half year (1/2)
+     * @return - ArrayList of written grades as Integer
+     */
     public ArrayList<Integer> getNotenSchriftlich(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
@@ -93,18 +109,26 @@ public class Database {
         }
     }
 
-    public float getAvgNoteMuendlich(int fachId, int schuelerId) {
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @param halbjahr - half year (1/2)
+     * @return - ArrayList of oral grades as Integer
+     */
+    public float getAvgNoteMuendlich(int fachId, int schuelerId, int halbjahr) {
         String avgNote = "SELECT AVG (note)\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 2);
+            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1);
         } catch (SQLException e) {
@@ -113,6 +137,12 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @param halbjahr - half year (1/2)
+     * @return - ArrayList of written grades as Integer
+     */
     public ArrayList<Integer> getNotenMuendlich(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
@@ -139,20 +169,27 @@ public class Database {
         }
     }
 
-    public float getAvgNoteZusatz(int fachId, int schuelerId){
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @param halbjahr - half year (1/2)
+     * @return - Average extra grades
+     */
+    public float getAvgNoteZusatz(int fachId, int schuelerId, int halbjahr) {
         String avgNote = "SELECT AVG (note)\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
+                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
+            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
-
             return rs.getFloat(1);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -160,6 +197,12 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachId - Id of the subject
+     * @param schuelerId - Id of the student
+     * @param halbjahr - half year (1/2)
+     * @return - ArrayList of extra grades as Integer
+     */
     public ArrayList<Integer> getNotenZusatz(int fachId, int schuelerId, int halbjahr){
         String note = "SELECT note\n"
                 + "FROM note\n"
@@ -187,6 +230,10 @@ public class Database {
     }
 
 
+    /**
+     * @param schuelerId - Id of the student you want all Subject ids
+     * @return - ArrayList with all Subject ids as Integer
+     */
     public ArrayList<Integer> getFaecherIdBySchuelerId(int schuelerId){
         ArrayList<Integer> faecherId = new ArrayList<>();
         String getFaecherId = "SELECT faecherids\n"
@@ -208,6 +255,15 @@ public class Database {
         }
     }
 
+    /**
+     * Creates new student in the Database
+     *
+     * @param name - Name of the new student
+     * @param vorname - prename of the new student
+     * @param benutzername - username of the new student
+     * @param passwort - password for students account
+     * @param klasseid - Class the student is in
+     */
     public void addSchueler(String name, String vorname, String benutzername, String passwort, int klasseid){
         String addSchueler = "INSERT INTO schueler (schuelername, schuelervorname, benutzername, passwort, klasseid)"
                 + "VALUES (?,?,?,?,?)"
@@ -225,23 +281,14 @@ public class Database {
         }
     }
 
-    public void addFach(int klasseid, String bezeichnung, int schriftlich, int muendlich, int zusatz){
-        String addFach = "INSERT INTO fach (klasseid ,fachbezeichnung, wertungschriftlich, wertungmuendlich, wertungzusatz)"
-                + "VALUES (?,?,?,?,?)"
-                + ";";
-        try (Connection conn = DriverManager.getConnection(url)) {
-            pstmt = conn.prepareStatement(addFach);
-            pstmt.setInt(1,klasseid);
-            pstmt.setString(2, bezeichnung);
-            pstmt.setInt(3, schriftlich);
-            pstmt.setInt(4, muendlich);
-            pstmt.setInt(5, zusatz);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
+    /**
+     * Add a new grade to a student
+     *
+     * @param note - Grade (0 - 15)
+     * @param notentype - Type of the Grade (1 = written, 2 = oral, 3 = extra)
+     * @param fachid - Id of the subject
+     * @param schuelerid - Id of the student
+     */
     public void addNote(int note, int notentype, int fachid, int schuelerid){
         String addNote = "INSERT INTO note (note, notentype, fachid, schuelerid)\n"
                 + "VALUES(?,?,?,?)"
@@ -257,19 +304,11 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-    public void addKlasse(String name){
-        String addKlasse = "INSERT INTO klasse (klasse)\n"
-                + "VALUES (?)"
-                + ";";
-        try (Connection conn = DriverManager.getConnection(url)) {
-            pstmt = conn.prepareStatement(addKlasse);
-            pstmt.setString(1, name);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
+    /**
+     * @param username - Username you need password from
+     * @return - right password for username
+     */
     public String getPasswordByUsername(String username){
         String passwordByUsername = "SELECT passwort\n"
                 + "FROM schueler\n"
@@ -285,6 +324,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param username - Username
+     * @return - ID of the student
+     */
     public int getSchuelerIdByUsername(String username){
         String getSchuelerId = "SELECT schuelerid\n"
                 + "FROM schueler\n"
@@ -302,6 +345,10 @@ public class Database {
 
     }
 
+    /**
+     * @param schuelerId - Student id to get the name
+     * @return - Returns the name of the student with id "schuelerId"
+     */
     public String getSchuelerNameBySchuelerId(int schuelerId){
         String getSchuelerName = "SELECT schuelername\n"
                 + "FROM schueler\n"
@@ -318,6 +365,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param schuelerId - Student id you want prename
+     * @return - Returns prename of the student with the id "schuelerId"
+     */
     public String getSchuelerVornameBySchuelerId(int schuelerId){
         String getSchuelerVorname = "SELECT schuelervorname\n"
                 + "FROM schueler\n"
@@ -334,6 +385,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param schuelerId - Student id you want username
+     * @return - The username for the student with id "schuelerId"
+     */
     public String getUsernameBySchuelerId(int schuelerId){
         String getSchuelerVorname = "SELECT benutzername\n"
                 + "FROM schueler\n"
@@ -350,6 +405,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param schuelerId - student Id
+     * @return - Class name for the student
+     */
     public String getKlasseBySchuelerId(int schuelerId){
         String getKlasseBySchuelerId = "SELECT k.klasse\n"
                 + "FROM schueler s, klasse k\n"
@@ -367,6 +426,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachid - Subject id you want written grading
+     * @return - Grading for the subject with Id "fachid" as float (0.0 - 1.0)
+     */
     public float getWertungSchriftlich(int fachid){
         String getWertungSchriftlich = "SELECT wertungschriftlich\n"
                 + "FROM fach\n"
@@ -383,6 +446,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachid - Subject id you want the oral grading
+     * @return - Returns the oral grading with Id "fachid" as float (0.0 - 1.0)
+     */
     public float getWertungMuendlich(int fachid){
         String getWertungMuendlich = "SELECT wertungmuendlich\n"
                 + "FROM fach\n"
@@ -399,6 +466,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachid - Subject id you want the extra grading
+     * @return - Returns the extra grading for the subject with id "fachid" as float (0.0 - 1.0)
+     */
     public float getWertungZusatz(int fachid){
         String getWertungSchriftlich = "SELECT wertungzusatz\n"
                 + "FROM fach\n"
@@ -415,6 +486,10 @@ public class Database {
         }
     }
 
+    /**
+     * @param fachid - Subject id you want the name of
+     * @return - Returns name of the subject with id "fachid" as String
+     */
     public String getFachById(int fachid){
         String getFachById = "SELECT fachbezeichnung\n"
                 + "FROM fach\n"
