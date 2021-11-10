@@ -1,4 +1,4 @@
 package me.mustache.gui;
 
-public class Fachansicht {
+public class InfoScreen {
 }
