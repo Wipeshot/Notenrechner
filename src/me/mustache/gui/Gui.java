@@ -49,9 +49,6 @@ public class Gui extends JFrame {
     JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
     JLabel[] schriftlichEinzelNoten;
 
-
-
-
     public Gui() {
         createWindow();
     }
@@ -68,6 +65,7 @@ public class Gui extends JFrame {
 
 
     public void loginScreen(){
+        this.add(new LoginScreen().getContentPane());
         loginScreen.setLayout(new GridLayout(3,1));
         loginScreen.setBorder(new LineBorder(Color.GREEN));
         loginScreen.setBounds(1280/2-200,720/2-100, 400, 200);
