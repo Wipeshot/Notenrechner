@@ -430,14 +430,16 @@ public class Database {
      * @param fachid - Subject id you want written grading
      * @return - Grading for the subject with Id "fachid" as float (0.0 - 1.0)
      */
-    public float getWertungSchriftlich(int fachid){
-        String getWertungSchriftlich = "SELECT wertungschriftlich\n"
-                + "FROM fach\n"
-                + "WHERE fachid = ?"
+    public float getWertungSchriftlich(int fachid, int klassenid){
+        String getWertungSchriftlich = "SELECT schriftlich\n"
+                + "FROM noten_wertung\n"
+                + "WHERE fachid = ?\n"
+                + "AND klasseid = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getWertungSchriftlich);
             pstmt.setInt(1, fachid);
+            pstmt.setInt(2, klassenid);
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1)/100;
         } catch (SQLException e) {
@@ -450,14 +452,16 @@ public class Database {
      * @param fachid - Subject id you want the oral grading
      * @return - Returns the oral grading with Id "fachid" as float (0.0 - 1.0)
      */
-    public float getWertungMuendlich(int fachid){
-        String getWertungMuendlich = "SELECT wertungmuendlich\n"
-                + "FROM fach\n"
-                + "WHERE fachid = ?"
+    public float getWertungMuendlich(int fachid, int klassenid){
+        String getWertungMuendlich = "SELECT muendlich\n"
+                + "FROM noten_wertung\n"
+                + "WHERE fachid = ?\n"
+                + "AND klasseid = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getWertungMuendlich);
             pstmt.setInt(1, fachid);
+            pstmt.setInt(2, klassenid);
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1)/100;
         } catch (SQLException e) {
@@ -470,14 +474,16 @@ public class Database {
      * @param fachid - Subject id you want the extra grading
      * @return - Returns the extra grading for the subject with id "fachid" as float (0.0 - 1.0)
      */
-    public float getWertungZusatz(int fachid){
-        String getWertungSchriftlich = "SELECT wertungzusatz\n"
-                + "FROM fach\n"
-                + "WHERE fachid = ?"
+    public float getWertungZusatz(int fachid, int klassenid){
+        String getWertungSchriftlich = "SELECT sonstige\n"
+                + "FROM noten_wertung\n"
+                + "WHERE fachid = ?\n"
+                + "AND klasseid = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getWertungSchriftlich);
             pstmt.setInt(1, fachid);
+            pstmt.setInt(2, klassenid);
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1)/100;
         } catch (SQLException e) {
@@ -503,6 +509,22 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    public int getKlasseIdBySchuelerId(int schuelerId){
+        String getFachById = "SELECT klasseid\n"
+                + "FROM schueler\n"
+                + "WHERE schuelerid = ?"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(getFachById);
+            pstmt.setInt(1, schuelerId);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 
