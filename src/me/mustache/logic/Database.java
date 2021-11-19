@@ -289,9 +289,9 @@ public class Database {
      * @param fachid - Id of the subject
      * @param schuelerid - Id of the student
      */
-    public void addNote(int note, int notentype, int fachid, int schuelerid){
-        String addNote = "INSERT INTO note (note, notentype, fachid, schuelerid)\n"
-                + "VALUES(?,?,?,?)"
+    public void addNote(int note, int notentype, int fachid, int schuelerid, int halbjahr, int prognose){
+        String addNote = "INSERT INTO note (note, notentype, fachid, schuelerid, halbjahr, prognose)\n"
+                + "VALUES(?,?,?,?,?,?)"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(addNote);
@@ -299,6 +299,8 @@ public class Database {
             pstmt.setInt(2, notentype);
             pstmt.setInt(3, fachid);
             pstmt.setInt(4, schuelerid);
+            pstmt.setInt(5, halbjahr);
+            pstmt.setInt(6, prognose);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
