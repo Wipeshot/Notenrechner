@@ -65,13 +65,8 @@ public class Gui extends JFrame {
     }
 
 
-
     public void loginScreen() {
         loginScreen.setLayout(new GridLayout(3, 1));
-    public void loginScreen(){
-        this.add(new LoginScreen().getContentPane());
-        loginScreen.setLayout(new GridLayout(3,1));
-
         loginScreen.setBorder(new LineBorder(Color.GREEN));
         loginScreen.setBounds(1280 / 2 - 200, 720 / 2 - 100, 400, 200);
         loginScreen.setVisible(true);
@@ -124,7 +119,6 @@ public class Gui extends JFrame {
         faecherinfo.setLayout(new GridLayout(nr.getAnzFaecherBySchuelerId(schuelerId) + 1, 7));
         faecherinfo.setBorder(new LineBorder(Color.GREEN));
         faecherinfo.setBounds(0, 50, 1264, nr.getAnzFaecherBySchuelerId(schuelerId) + 1 * 70);
-        faecherinfo.setBounds(0,50,1264, nr.getAnzFaecherBySchuelerId(schuelerId)*40);
         faecherinfo.setVisible(true);
 
         colmBezeichnung = new JLabel[7];
@@ -204,17 +198,10 @@ public class Gui extends JFrame {
         });
     }
 
-
     private void setupWertung(int fachId, int schuelerId, int arrayPlace) {
         schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId) * 100) + "%");
         muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId) * 100) + "%");
         zusatz[arrayPlace].setText(Math.round(db.getWertungZusatz(fachId) * 100) + "%");
-
-    private void setupWertung(int fachId, int schuelerId, int arrayPlace){
-        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId))*100) + "%");
-        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId, db.getKlasseIdBySchuelerId(schuelerId))*100) + "%");
-        zusatz[arrayPlace].setText(Math.round(db.getWertungZusatz(fachId, db.getKlasseIdBySchuelerId(schuelerId)) * 100) + "%");
-
 
         for (ActionListener act : wertung[arrayPlace].getActionListeners()) {
             wertung[arrayPlace].removeActionListener(act);
