@@ -32,9 +32,9 @@ public class Notenrechner {
         note[1] = db.getAvgNoteSchriftlich(fachId, schuelerId, 1);
         note[2] = db.getAvgNoteZusatz(fachId, schuelerId, 1);
 
-        wertung[0] = db.getWertungMuendlich(fachId);
-        wertung[1] = db.getWertungSchriftlich(fachId);
-        wertung[2] = db.getWertungZusatz(fachId);
+        wertung[0] = db.getWertungMuendlich(fachId, db.getKlasseIdBySchuelerId(schuelerId));
+        wertung[1] = db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId));
+        wertung[2] = db.getWertungZusatz(fachId, db.getKlasseIdBySchuelerId(schuelerId));
 
         grade = note[0]*wertung[0]+note[1]*wertung[1]+note[2]*wertung[2];
 
