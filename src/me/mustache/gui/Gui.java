@@ -68,8 +68,6 @@ public class Gui extends JFrame {
 
     public void loginScreen() {
         loginScreen.setLayout(new GridLayout(3, 1));
-    public void loginScreen(){
-        this.add(new LoginScreen().getContentPane());
         loginScreen.setLayout(new GridLayout(3,1));
 
         loginScreen.setBorder(new LineBorder(Color.GREEN));
@@ -204,11 +202,6 @@ public class Gui extends JFrame {
         });
     }
 
-
-    private void setupWertung(int fachId, int schuelerId, int arrayPlace) {
-        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId) * 100) + "%");
-        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId) * 100) + "%");
-        zusatz[arrayPlace].setText(Math.round(db.getWertungZusatz(fachId) * 100) + "%");
 
     private void setupWertung(int fachId, int schuelerId, int arrayPlace){
         schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId))*100) + "%");
