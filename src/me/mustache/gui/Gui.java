@@ -50,27 +50,25 @@ public class Gui extends JFrame {
     JLabel[] schriftlichEinzelNoten;
 
 
-
-
     public Gui() {
         createWindow();
     }
 
     public void createWindow() {
-       this.setSize(1280,720);
-       this.setResizable(false);
-       this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-       this.setLayout(null);
-       this.setVisible(true);
+        this.setSize(1280, 720);
+        this.setResizable(false);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setLayout(null);
+        this.setVisible(true);
 
-       loginScreen();
+        loginScreen();
     }
 
 
-    public void loginScreen(){
-        loginScreen.setLayout(new GridLayout(3,1));
+    public void loginScreen() {
+        loginScreen.setLayout(new GridLayout(3, 1));
         loginScreen.setBorder(new LineBorder(Color.GREEN));
-        loginScreen.setBounds(1280/2-200,720/2-100, 400, 200);
+        loginScreen.setBounds(1280 / 2 - 200, 720 / 2 - 100, 400, 200);
         loginScreen.setVisible(true);
 
         loginScreen.add(benutzername);
@@ -81,17 +79,19 @@ public class Gui extends JFrame {
         loginScreen.updateUI();
 
         login.addActionListener(e -> {
-            if(new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword()))) setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText()));wrongPassword();
+            if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
+                setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText()));
+            wrongPassword();
         });
     }
 
-    public void setupUserscreen(int schuelerId){
+    public void setupUserscreen(int schuelerId) {
         this.remove(loginScreen);
         this.repaint();
 
-        userinfo.setLayout(new GridLayout(1,4));
+        userinfo.setLayout(new GridLayout(1, 5));
         userinfo.setBorder(new LineBorder(Color.GREEN));
-        userinfo.setBounds(0,0,1264,50);
+        userinfo.setBounds(0, 0, 1264, 50);
         userinfo.setVisible(true);
 
         name = new JLabel("Name: " + db.getSchuelerVornameBySchuelerId(schuelerId) + " " + db.getSchuelerNameBySchuelerId(schuelerId));
@@ -110,15 +110,15 @@ public class Gui extends JFrame {
         setupFaecherinfo(schuelerId);
     }
 
-    public void wrongPassword(){
+    public void wrongPassword() {
         benutzername.setBackground(Color.RED);
         passwort.setBackground(Color.RED);
     }
 
-    public void setupFaecherinfo(int schuelerId){
-        faecherinfo.setLayout(new GridLayout(nr.getAnzFaecherBySchuelerId(schuelerId)+1,7));
+    public void setupFaecherinfo(int schuelerId) {
+        faecherinfo.setLayout(new GridLayout(nr.getAnzFaecherBySchuelerId(schuelerId) + 1, 7));
         faecherinfo.setBorder(new LineBorder(Color.GREEN));
-        faecherinfo.setBounds(0,50,1264,nr.getAnzFaecherBySchuelerId(schuelerId)+1*70);
+        faecherinfo.setBounds(0, 50, 1264, nr.getAnzFaecherBySchuelerId(schuelerId) + 1 * 70);
         faecherinfo.setVisible(true);
 
         colmBezeichnung = new JLabel[7];
@@ -132,7 +132,7 @@ public class Gui extends JFrame {
         colmBezeichnung[5] = new JLabel("Wertung");
         colmBezeichnung[6] = new JLabel("Einzelnoten");
 
-        for (JLabel l : colmBezeichnung){
+        for (JLabel l : colmBezeichnung) {
             faecherinfo.add(l);
         }
 
@@ -143,7 +143,7 @@ public class Gui extends JFrame {
 
     }
 
-    private void initFaecherNote(int schuelerId){
+    private void initFaecherNote(int schuelerId) {
         ArrayList<Integer> faecherIds = db.getFaecherIdBySchuelerId(schuelerId);
 
         fach = new JLabel[nr.getAnzFaecherBySchuelerId(schuelerId)];
@@ -155,15 +155,14 @@ public class Gui extends JFrame {
         fachansicht = new JButton[nr.getAnzFaecherBySchuelerId(schuelerId)];
 
 
-        for (int i = 0; i< nr.getAnzFaecherBySchuelerId(schuelerId); i++){
+        for (int i = 0; i < nr.getAnzFaecherBySchuelerId(schuelerId); i++) {
             fach[i] = new JLabel(db.getFachById(faecherIds.get(i)));
             schriftlich[i] = new JLabel(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerId, 1)));
-            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId,1)));
+            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId, 1)));
             zusatz[i] = new JLabel(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerId, 1)));
             endnote[i] = new JLabel(String.valueOf(nr.calculateGrades(faecherIds.get(i), schuelerId)));
             wertung[i] = new JButton("Umschalten");
             fachansicht[i] = new JButton("Mehr Informationen");
-
 
 
             int finali = i;
@@ -185,26 +184,26 @@ public class Gui extends JFrame {
         }
     }
 
-    private void setupNote(int fachId, int schuelerId, int arrayPlace){
+    private void setupNote(int fachId, int schuelerId, int arrayPlace) {
         schriftlich[arrayPlace].setText(String.valueOf(db.getAvgNoteSchriftlich(fachId, schuelerId, 1)));
         muendlich[arrayPlace].setText(String.valueOf(db.getAvgNoteMuendlich(fachId, schuelerId, 1)));
         zusatz[arrayPlace].setText(String.valueOf(db.getAvgNoteZusatz(fachId, schuelerId, 1)));
 
-        for (ActionListener act :  wertung[arrayPlace].getActionListeners()){
+        for (ActionListener act : wertung[arrayPlace].getActionListeners()) {
             wertung[arrayPlace].removeActionListener(act);
         }
 
         wertung[arrayPlace].addActionListener(e -> {
-            setupWertung(fachId,schuelerId,arrayPlace);
+            setupWertung(fachId, schuelerId, arrayPlace);
         });
     }
 
-    private void setupWertung(int fachId, int schuelerId, int arrayPlace){
-        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId)*100) + "%");
-        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId)*100) + "%");
+    private void setupWertung(int fachId, int schuelerId, int arrayPlace) {
+        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId) * 100) + "%");
+        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId) * 100) + "%");
         zusatz[arrayPlace].setText(Math.round(db.getWertungZusatz(fachId) * 100) + "%");
 
-        for (ActionListener act :  wertung[arrayPlace].getActionListeners()){
+        for (ActionListener act : wertung[arrayPlace].getActionListeners()) {
             wertung[arrayPlace].removeActionListener(act);
         }
 
@@ -213,24 +212,24 @@ public class Gui extends JFrame {
         });
     }
 
-    private void setupFachinfo(int fachId, int schuelerId){
+    private void setupFachinfo(int fachId, int schuelerId) {
         this.remove(faecherinfo);
 
-        goBackToFaecherInfo.setBounds(this.getBounds().width-200,userinfo.getBounds().height, 200,50);
+        goBackToFaecherInfo.setBounds(this.getBounds().width - 200, userinfo.getBounds().height, 200, 50);
         goBackToFaecherInfo.addActionListener(e -> {
             this.add(faecherinfo);
             this.remove(goBackToFaecherInfo);
             this.remove(panelNoteSchriftlich);
-            for(ActionListener act : goBackToFaecherInfo.getActionListeners()) {
+            for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
             this.repaint();
         });
 
-        panelNoteSchriftlich.setBounds(this.getBounds().width/100, userinfo.getBounds().height*2, (int) (this.getBounds().width/2.5), this.getBounds().height/5);
+        panelNoteSchriftlich.setBounds(this.getBounds().width / 100, userinfo.getBounds().height * 2, (int) (this.getBounds().width / 2.5), this.getBounds().height / 5);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteSchriftlich.setLayout(new GridLayout(5,1));
-        setupNoteSchriftlichForFach(fachId,schuelerId,1);
+        panelNoteSchriftlich.setLayout(new GridLayout(5, 1));
+        setupNoteSchriftlichForFach(fachId, schuelerId, 1);
 
         panelNoteSchriftlich.add(schriftlichSchriftzugTable);
         schriftlichSchriftzugTable.setVisible(true);
@@ -242,21 +241,17 @@ public class Gui extends JFrame {
         this.add(panelNoteSchriftlich);
 
 
-
-
         this.repaint();
     }
 
 
-    private void setupNoteSchriftlichForFach(int fachId, int schuelerId, int halbjahr){
+    private void setupNoteSchriftlichForFach(int fachId, int schuelerId, int halbjahr) {
         ArrayList<Integer> notenSchriftlichList = db.getNotenSchriftlich(fachId, schuelerId, halbjahr);
 
         this.schriftlichEinzelNoten = new JLabel[notenSchriftlichList.size()];
-
-        for(int i=0; i < notenSchriftlichList.size(); i++){
+        for (int i = 0; i < notenSchriftlichList.size(); i++) {
 
             this.schriftlichEinzelNoten[i] = new JLabel();
-
             this.schriftlichEinzelNoten[i].setText(String.valueOf(notenSchriftlichList.get(i)));
             this.panelNoteSchriftlich.add(this.schriftlichEinzelNoten[i]);
             this.schriftlichEinzelNoten[i].setVisible(true);
