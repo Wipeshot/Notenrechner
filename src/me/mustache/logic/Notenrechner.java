@@ -10,7 +10,7 @@ public class Notenrechner {
         return instance;
     }
 
-    private Database db = Database.getInstance();
+    private final Database db = Database.getInstance();
 
     private float grade;
     private float avgGrade;

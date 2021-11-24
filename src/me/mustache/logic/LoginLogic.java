@@ -14,7 +14,7 @@ public class LoginLogic {
      * @return - true if the param password equals the password in Database; false if not
      */
     public boolean checkPassword(String username, String password){
-        String rightPassword = db.getPasswordByUsername(username);
+        String rightPassword = db.getPasswordByUsername(username.toLowerCase());
         return (password.equals(rightPassword));
     }
 

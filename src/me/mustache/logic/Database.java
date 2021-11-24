@@ -308,13 +308,30 @@ public class Database {
     }
 
     /**
+     * @param noteid - Id from the grade that you need to delete
+     */
+    public void removeNote(int noteid){
+        String removeNote = "DELETE\n"
+                + "FROM note\n"
+                + "WHERE notenid = ?"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(removeNote);
+            pstmt.setInt(1, noteid);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
      * @param username - Username you need password from
      * @return - right password for username
      */
     public String getPasswordByUsername(String username){
         String passwordByUsername = "SELECT passwort\n"
                 + "FROM schueler\n"
-                + "WHERE benutzername = ?";
+                + "WHERE LOWER(benutzername) = ?";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(passwordByUsername);
             pstmt.setString(1, username);
@@ -333,7 +350,7 @@ public class Database {
     public int getSchuelerIdByUsername(String username){
         String getSchuelerId = "SELECT schuelerid\n"
                 + "FROM schueler\n"
-                + "WHERE benutzername = ?"
+                + "WHERE lower(benutzername) = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getSchuelerId);
