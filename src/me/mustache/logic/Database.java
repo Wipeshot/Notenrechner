@@ -324,6 +324,26 @@ public class Database {
         }
     }
 
+    public ArrayList<Integer> getSemesterByStudentId(int studentid){
+        ArrayList<Integer> semester = new ArrayList<>();
+        String getSemester = "SELECT halbjahr\n"
+                + "FROM note\n"
+                + "WHERE schuelerid = ?"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(getSemester);
+            pstmt.setInt(1, studentid);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                semester.add(rs.getInt(1));
+            }
+            return semester;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * @param username - Username you need password from
      * @return - right password for username

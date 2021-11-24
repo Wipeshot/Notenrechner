@@ -8,12 +8,11 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.net.JarURLConnection;
 import java.util.ArrayList;
 
 public class Gui extends JFrame {
+
+    private int actualHalbjahr;
 
     //getInstances
     Database db = Database.getInstance();
@@ -89,7 +88,7 @@ public class Gui extends JFrame {
         login.addActionListener(e -> {
             if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
                 setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
-            wrongPassword();
+                wrongPassword();
         });
     }
 
@@ -321,6 +320,14 @@ public class Gui extends JFrame {
             this.panelNoteSchriftlich.add(this.schriftlichEinzelNoten[i]);
             this.schriftlichEinzelNoten[i].setVisible(true);
         }
+    }
+
+    private int getActualHalbjahr() {
+        return actualHalbjahr;
+    }
+
+    private void setActualHalbjahr(int actualHalbjahr) {
+        this.actualHalbjahr = actualHalbjahr;
     }
 
 }
