@@ -308,6 +308,23 @@ public class Database {
     }
 
     /**
+     * @param noteid - Id from the grade that you need to delete
+     */
+    public void removeNote(int noteid){
+        String removeNote = "DELETE\n"
+                + "FROM note\n"
+                + "WHERE notenid = ?"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(removeNote);
+            pstmt.setInt(1, noteid);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
      * @param username - Username you need password from
      * @return - right password for username
      */
