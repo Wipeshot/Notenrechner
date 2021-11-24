@@ -530,4 +530,31 @@ public class Database {
         }
     }
 
+    public  int getAnzNotenBySchuelerId(int schuelerId, int fachId, int notentype, int prognose){
+        String getAnzNoten = "SELECT note\n"
+                + "FROM note\n"
+                + "WHERE schuelerid = ?\n"
+                + "AND fachId = ?\n"
+                + "AND notentype = ?\n"
+                + "AND prognose = ?"
+                + ";";
+        ArrayList<Integer> forCal = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(getAnzNoten);
+            pstmt.setInt(1, schuelerId);
+            pstmt.setInt(2, fachId);
+            pstmt.setInt(3, notentype);
+            pstmt.setInt(4, prognose);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                forCal.add(rs.getInt(1));
+            }
+            System.out.println(forCal.size());
+            return forCal.size();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
+
 }

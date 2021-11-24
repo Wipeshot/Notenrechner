@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.net.JarURLConnection;
 import java.util.ArrayList;
 
 public class Gui extends JFrame {
@@ -34,7 +35,7 @@ public class Gui extends JFrame {
     JButton halbjahrButton;
 
     //HalbjahrFenster
-    JButton[] halbjahr;
+    JButton[] halbjahrButtons;
     JPanel halbjahrPanel;
 
     //Faecherinfo
@@ -54,6 +55,9 @@ public class Gui extends JFrame {
     JPanel panelNoteSchriftlich = new JPanel();
     JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
     JLabel[] schriftlichEinzelNoten;
+    JTable tabelleSchriftlich;
+    JTable tabelleMuendlich;
+    JTable tabelleZusatz;
 
 
     public Gui() {
@@ -123,18 +127,36 @@ public class Gui extends JFrame {
 
     private void halbjahrAendern() {
         halbjahrFrame = new JFrame("Halbjahr ändern");
-        halbjahrFrame.setDefaultCloseOperation(halbjahrFrame.EXIT_ON_CLOSE);
-        halbjahrFrame.setSize(600,400);
-        halbjahrFrame.setLocationRelativeTo(null);
+        halbjahrFrame.setUndecorated(true);
+        halbjahrFrame.setSize(250,100);
+        halbjahrFrame.setLocation(600,600);
         halbjahrFrame.setResizable(false);
         halbjahrFrame.setVisible(true);
 
         halbjahrPanel = new JPanel();
-        halbjahrPanel.setLayout(new GridLayout(1,4));
         halbjahrPanel.setBounds(100,100,100,50);
+        halbjahrPanel.setLayout(new GridLayout(4,1));
         halbjahrPanel.setBorder(new LineBorder(Color.GREEN));
         halbjahrPanel.setVisible(true);
         halbjahrFrame.add(halbjahrPanel);
+
+
+        halbjahrButtons = new JButton[4];
+        halbjahrButtons[0] = new JButton("J1, 1. Halbjahr");
+        halbjahrButtons[1] = new JButton("J1, 2. Halbjahr");
+        halbjahrButtons[2] = new JButton("J2, 1. Halbjahr");
+        halbjahrButtons[3] = new JButton("J2, 2. Halbjahr");
+
+        for(JButton btn : halbjahrButtons){
+            halbjahrPanel.add(btn);
+        }
+
+        for(JButton btn : halbjahrButtons){
+            btn.addActionListener(e -> {
+                halbjahrFrame.dispose();
+            });
+        }
+
 
 
     }
@@ -244,7 +266,7 @@ public class Gui extends JFrame {
         });
     }
 
-    private void setupFachinfo(int fachId, int schuelerId) {
+   private void setupFachinfo(int fachId, int schuelerId) {
         this.remove(faecherinfo);
 
         goBackToFaecherInfo.setBounds(this.getBounds().width - 200, userinfo.getBounds().height, 200, 50);
@@ -258,13 +280,24 @@ public class Gui extends JFrame {
             this.repaint();
         });
 
-        panelNoteSchriftlich.setBounds(this.getBounds().width / 100, userinfo.getBounds().height * 2, (int) (this.getBounds().width / 2.5), this.getBounds().height / 5);
+        panelNoteSchriftlich.setBounds(this.getBounds().width / 100, (userinfo.getBounds().height * 2) +50, (int) (this.getBounds().width)/2, this.getBounds().height / 5);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteSchriftlich.setLayout(new GridLayout(5, 1));
-        setupNoteSchriftlichForFach(fachId, schuelerId, 1);
+        panelNoteSchriftlich.setLayout(new GridLayout());
+        /*setupNoteSchriftlichForFach(fachId, schuelerId, 1);
 
-        panelNoteSchriftlich.add(schriftlichSchriftzugTable);
-        schriftlichSchriftzugTable.setVisible(true);
+       // panelNoteSchriftlich.add(schriftlichSchriftzugTable);
+       schriftlichSchriftzugTable.setVisible(true);*/
+
+        tabelleSchriftlich = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,1,0),3);
+        tabelleSchriftlich.setVisible(true);
+
+       tabelleMuendlich = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,2,0),3);
+       tabelleSchriftlich.setVisible(true);
+
+       tabelleZusatz = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,3,0),3);
+       tabelleSchriftlich.setVisible(true);
+
+       panelNoteSchriftlich.add(tabelleSchriftlich);
 
 
         goBackToFaecherInfo.setVisible(true);
