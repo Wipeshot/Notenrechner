@@ -314,7 +314,7 @@ public class Database {
     public String getPasswordByUsername(String username){
         String passwordByUsername = "SELECT passwort\n"
                 + "FROM schueler\n"
-                + "WHERE benutzername = ?";
+                + "WHERE LOWER(benutzername) = ?";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(passwordByUsername);
             pstmt.setString(1, username);
@@ -333,7 +333,7 @@ public class Database {
     public int getSchuelerIdByUsername(String username){
         String getSchuelerId = "SELECT schuelerid\n"
                 + "FROM schueler\n"
-                + "WHERE benutzername = ?"
+                + "WHERE lower(benutzername) = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getSchuelerId);

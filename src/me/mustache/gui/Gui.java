@@ -84,7 +84,7 @@ public class Gui extends JFrame {
 
         login.addActionListener(e -> {
             if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
-                setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText()));
+                setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
             wrongPassword();
         });
     }
