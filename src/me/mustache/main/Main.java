@@ -1,6 +1,4 @@
 package me.mustache.main;
-
-import me.mustache.gui.GradeScreen;
 import me.mustache.gui.Gui;
 import me.mustache.logic.Database;
 
@@ -14,7 +12,8 @@ public class Main {
         new Gui();
 
 
-     //   new GradeScreen("My Grade Screen");
+
+
 
     }
 

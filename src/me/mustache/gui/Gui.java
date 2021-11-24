@@ -23,6 +23,7 @@ public class Gui extends JFrame {
     JTextField benutzername = new HintTextField("Benutzername");
     JPasswordField passwort = new HintPasswordField("Passwort");
     JButton login = new JButton("Einloggen");
+    JFrame halbjahrFrame;
 
     //Userinfo
     JPanel userinfo = new JPanel();
@@ -30,6 +31,11 @@ public class Gui extends JFrame {
     JLabel username;
     JLabel userClass;
     JLabel notenschnitt;
+    JButton halbjahrButton;
+
+    //HalbjahrFenster
+    JButton[] halbjahr;
+    JPanel halbjahrPanel;
 
     //Faecherinfo
     JPanel faecherinfo = new JPanel();
@@ -51,10 +57,6 @@ public class Gui extends JFrame {
 
 
     public Gui() {
-        createWindow();
-    }
-
-    public void createWindow() {
         this.setSize(1280, 720);
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -68,7 +70,6 @@ public class Gui extends JFrame {
 
     public void loginScreen() {
         loginScreen.setLayout(new GridLayout(3, 1));
-        loginScreen.setLayout(new GridLayout(3,1));
 
         loginScreen.setBorder(new LineBorder(Color.GREEN));
         loginScreen.setBounds(1280 / 2 - 200, 720 / 2 - 100, 400, 200);
@@ -88,7 +89,7 @@ public class Gui extends JFrame {
         });
     }
 
-    public void setupUserscreen(int schuelerId) {
+    private void setupUserscreen(int schuelerId) {
         this.remove(loginScreen);
         this.repaint();
 
@@ -101,16 +102,41 @@ public class Gui extends JFrame {
         username = new JLabel("Benutzername: " + db.getUsernameBySchuelerId(schuelerId));
         userClass = new JLabel(("Klasse: " + db.getKlasseBySchuelerId(schuelerId)));
         notenschnitt = new JLabel("Notenschnitt: " + (double) Math.round(nr.calculateAvgGrade(schuelerId)));
+        halbjahrButton = new JButton("Halbjahr ändern");
+
 
         userinfo.add(name);
         userinfo.add(username);
         userinfo.add(userClass);
         userinfo.add(notenschnitt);
+        userinfo.add(halbjahrButton);
+
+        halbjahrButton.addActionListener(e -> {
+            halbjahrAendern();
+        });
 
         this.add(userinfo);
         userinfo.updateUI();
 
         setupFaecherinfo(schuelerId);
+    }
+
+    private void halbjahrAendern() {
+        halbjahrFrame = new JFrame("Halbjahr ändern");
+        halbjahrFrame.setDefaultCloseOperation(halbjahrFrame.EXIT_ON_CLOSE);
+        halbjahrFrame.setSize(600,400);
+        halbjahrFrame.setLocationRelativeTo(null);
+        halbjahrFrame.setResizable(false);
+        halbjahrFrame.setVisible(true);
+
+        halbjahrPanel = new JPanel();
+        halbjahrPanel.setLayout(new GridLayout(1,4));
+        halbjahrPanel.setBounds(100,100,100,50);
+        halbjahrPanel.setBorder(new LineBorder(Color.GREEN));
+        halbjahrPanel.setVisible(true);
+        halbjahrFrame.add(halbjahrPanel);
+
+
     }
 
     public void wrongPassword() {
