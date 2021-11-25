@@ -3,6 +3,7 @@ package me.mustache.gui;
 import me.mustache.logic.Database;
 import me.mustache.logic.LoginLogic;
 import me.mustache.logic.Notenrechner;
+import me.mustache.logic.Semester;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 public class Gui extends JFrame {
 
     private int actualHalbjahr;
+    private boolean halbjahrFrameBool = false;
 
     //getInstances
     Database db = Database.getInstance();
@@ -89,6 +91,8 @@ public class Gui extends JFrame {
             if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
                 setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
                 wrongPassword();
+
+                setActualHalbjahr(new Semester().calculateNewestSemester(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase())));
         });
     }
 
@@ -115,7 +119,7 @@ public class Gui extends JFrame {
         userinfo.add(halbjahrButton);
 
         halbjahrButton.addActionListener(e -> {
-            halbjahrAendern();
+            if(!halbjahrFrameBool) halbjahrAendern(schuelerId);
         });
 
         this.add(userinfo);
@@ -124,40 +128,44 @@ public class Gui extends JFrame {
         setupFaecherinfo(schuelerId);
     }
 
-    private void halbjahrAendern() {
+    private void halbjahrAendern(int schuelerid) {
+        halbjahrFrameBool = true;
         halbjahrFrame = new JFrame("Halbjahr ändern");
         halbjahrFrame.setUndecorated(true);
-        halbjahrFrame.setSize(250,100);
-        halbjahrFrame.setLocation(600,600);
+        halbjahrFrame.setSize(250,200);
+        halbjahrFrame.setLayout(null);
+        halbjahrFrame.setAlwaysOnTop(true);
+        halbjahrFrame.setLocationRelativeTo(null);
         halbjahrFrame.setResizable(false);
         halbjahrFrame.setVisible(true);
 
-        halbjahrPanel = new JPanel();
+        /*halbjahrPanel = new JPanel();
         halbjahrPanel.setBounds(100,100,100,50);
         halbjahrPanel.setLayout(new GridLayout(4,1));
         halbjahrPanel.setBorder(new LineBorder(Color.GREEN));
         halbjahrPanel.setVisible(true);
-        halbjahrFrame.add(halbjahrPanel);
-
+        halbjahrFrame.add(halbjahrPanel);*/
 
         halbjahrButtons = new JButton[4];
         halbjahrButtons[0] = new JButton("J1, 1. Halbjahr");
         halbjahrButtons[1] = new JButton("J1, 2. Halbjahr");
         halbjahrButtons[2] = new JButton("J2, 1. Halbjahr");
         halbjahrButtons[3] = new JButton("J2, 2. Halbjahr");
-
+        int k = 0;
         for(JButton btn : halbjahrButtons){
-            halbjahrPanel.add(btn);
+            btn.setBounds(0,0+k, 250, 50);
+            k += 50;
+            halbjahrFrame.add(btn);
         }
 
         for(JButton btn : halbjahrButtons){
             btn.addActionListener(e -> {
+                setActualHalbjahr(new Semester().calculateNewestSemester(schuelerid));
                 halbjahrFrame.dispose();
+                halbjahrFrameBool = false;
+                this.repaint();
             });
         }
-
-
-
     }
 
     public void wrongPassword() {
