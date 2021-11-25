@@ -24,13 +24,13 @@ public class Notenrechner {
      * @param schuelerId - Student you want the calculated grade
      * @return - Grade in dependency of grading as float
      */
-    public float calculateGrades(int fachId, int schuelerId){
+    public float calculateGrades(int fachId, int schuelerId, int halbjahr){
         float[] note = new float[3];
         float[] wertung = new float[3];
 
-        note[0] = db.getAvgNoteMuendlich(fachId, schuelerId, 1);
-        note[1] = db.getAvgNoteSchriftlich(fachId, schuelerId, 1);
-        note[2] = db.getAvgNoteZusatz(fachId, schuelerId, 1);
+        note[0] = db.getAvgNoteMuendlich(fachId, schuelerId, halbjahr);
+        note[1] = db.getAvgNoteSchriftlich(fachId, schuelerId, halbjahr);
+        note[2] = db.getAvgNoteZusatz(fachId, schuelerId, halbjahr);
 
         wertung[0] = db.getWertungMuendlich(fachId, db.getKlasseIdBySchuelerId(schuelerId));
         wertung[1] = db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId));
@@ -45,10 +45,10 @@ public class Notenrechner {
      * @param schuelerId - Student id for average grade of all subjects
      * @return - Average grade of all subjects for student "schuelerId" as float
      */
-    public float calculateAvgGrade(int schuelerId){
+    public float calculateAvgGrade(int schuelerId, int halbjahr){
         ArrayList<Integer> faecherId = db.getFaecherIdBySchuelerId(schuelerId);
         for (int i = 0; getAnzFaecherBySchuelerId(schuelerId) > i; i++){
-            avgGrade = calculateGrades(faecherId.get(i), schuelerId) + avgGrade;
+            avgGrade = calculateGrades(faecherId.get(i), schuelerId, halbjahr) + avgGrade;
         }
         avgGrade = avgGrade/getAnzFaecherBySchuelerId(schuelerId);
         return avgGrade;

@@ -17,48 +17,47 @@ public class Gui extends JFrame {
     private boolean halbjahrFrameBool = false;
 
     //getInstances
-    Database db = Database.getInstance();
-    Notenrechner nr = Notenrechner.getInstance();
+    private Database db = Database.getInstance();
+    private Notenrechner nr = Notenrechner.getInstance();
 
     //Loginscreen
-    JPanel loginScreen = new JPanel();
-    JTextField benutzername = new HintTextField("Benutzername");
-    JPasswordField passwort = new HintPasswordField("Passwort");
-    JButton login = new JButton("Einloggen");
-    JFrame halbjahrFrame;
+    private JPanel loginScreen = new JPanel();
+    private JTextField benutzername = new HintTextField("Benutzername");
+    private JPasswordField passwort = new HintPasswordField("Passwort");
+    private JButton login = new JButton("Einloggen");
+    private JFrame halbjahrFrame;
 
     //Userinfo
-    JPanel userinfo = new JPanel();
-    JLabel name;
-    JLabel username;
-    JLabel userClass;
-    JLabel notenschnitt;
-    JButton halbjahrButton;
+    private JPanel userinfo = new JPanel();
+    private JLabel name;
+    private JLabel username;
+    private JLabel userClass;
+    private JLabel notenschnitt;
+    private JButton halbjahrButton;
 
     //HalbjahrFenster
-    JButton[] halbjahrButtons;
-    JPanel halbjahrPanel;
+    private JButton[] halbjahrButtons;
 
     //Faecherinfo
-    JPanel faecherinfo = new JPanel();
-    JLabel[] colmBezeichnung;
-    JLabel[] fach;
-    JLabel[] schriftlich;
-    JLabel[] muendlich;
-    JLabel[] zusatz;
-    JLabel[] endnote;
-    JButton[] wertung;
-    JButton[] fachansicht;
+    private JPanel faecherinfo = new JPanel();
+    private JLabel[] colmBezeichnung;
+    private JLabel[] fach;
+    private JLabel[] schriftlich;
+    private JLabel[] muendlich;
+    private JLabel[] zusatz;
+    private JLabel[] endnote;
+    private JButton[] wertung;
+    private JButton[] fachansicht;
 
     //Fachinfo
-    JPanel fachinfo = new JPanel();
-    JButton goBackToFaecherInfo = new JButton("Zurück zur Übersicht");
-    JPanel panelNoteSchriftlich = new JPanel();
-    JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
-    JLabel[] schriftlichEinzelNoten;
-    JTable tabelleSchriftlich;
-    JTable tabelleMuendlich;
-    JTable tabelleZusatz;
+    private JPanel fachinfo = new JPanel();
+    private JButton goBackToFaecherInfo = new JButton("Zurück zur Übersicht");
+    private JPanel panelNoteSchriftlich = new JPanel();
+    private JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
+    private JLabel[] schriftlichEinzelNoten;
+    private JTable tabelleSchriftlich;
+    private JTable tabelleMuendlich;
+    private JTable tabelleZusatz;
 
 
     public Gui() {
@@ -89,10 +88,9 @@ public class Gui extends JFrame {
 
         login.addActionListener(e -> {
             if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
+                setActualHalbjahr(new Semester().calculateNewestSemester(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase())));
                 setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
                 wrongPassword();
-
-                setActualHalbjahr(new Semester().calculateNewestSemester(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase())));
         });
     }
 
@@ -108,7 +106,7 @@ public class Gui extends JFrame {
         name = new JLabel("Name: " + db.getSchuelerVornameBySchuelerId(schuelerId) + " " + db.getSchuelerNameBySchuelerId(schuelerId));
         username = new JLabel("Benutzername: " + db.getUsernameBySchuelerId(schuelerId));
         userClass = new JLabel(("Klasse: " + db.getKlasseBySchuelerId(schuelerId)));
-        notenschnitt = new JLabel("Notenschnitt: " + (double) Math.round(nr.calculateAvgGrade(schuelerId)));
+        notenschnitt = new JLabel("Notenschnitt: " + (double) Math.round(nr.calculateAvgGrade(schuelerId, actualHalbjahr)));
         halbjahrButton = new JButton("Halbjahr ändern");
 
 
@@ -139,13 +137,6 @@ public class Gui extends JFrame {
         halbjahrFrame.setResizable(false);
         halbjahrFrame.setVisible(true);
 
-        /*halbjahrPanel = new JPanel();
-        halbjahrPanel.setBounds(100,100,100,50);
-        halbjahrPanel.setLayout(new GridLayout(4,1));
-        halbjahrPanel.setBorder(new LineBorder(Color.GREEN));
-        halbjahrPanel.setVisible(true);
-        halbjahrFrame.add(halbjahrPanel);*/
-
         halbjahrButtons = new JButton[4];
         halbjahrButtons[0] = new JButton("J1, 1. Halbjahr");
         halbjahrButtons[1] = new JButton("J1, 2. Halbjahr");
@@ -158,14 +149,33 @@ public class Gui extends JFrame {
             halbjahrFrame.add(btn);
         }
 
-        for(JButton btn : halbjahrButtons){
-            btn.addActionListener(e -> {
-                setActualHalbjahr(new Semester().calculateNewestSemester(schuelerid));
-                halbjahrFrame.dispose();
-                halbjahrFrameBool = false;
-                this.repaint();
-            });
-        }
+        halbjahrButtons[0].addActionListener(e -> {
+            setActualHalbjahr(1);
+            halbjahrFrame.dispose();
+            halbjahrFrameBool = false;
+            reloadNoten(schuelerid);
+        });
+
+        halbjahrButtons[1].addActionListener(e -> {
+            setActualHalbjahr(2);
+            halbjahrFrame.dispose();
+            halbjahrFrameBool = false;
+            reloadNoten(schuelerid);
+        });
+
+        halbjahrButtons[2].addActionListener(e -> {
+            setActualHalbjahr(3);
+            halbjahrFrame.dispose();
+            halbjahrFrameBool = false;
+            reloadNoten(schuelerid);
+        });
+
+        halbjahrButtons[3].addActionListener(e -> {
+            setActualHalbjahr(4);
+            halbjahrFrame.dispose();
+            halbjahrFrameBool = false;
+            reloadNoten(schuelerid);
+        });
     }
 
     public void wrongPassword() {
@@ -216,10 +226,10 @@ public class Gui extends JFrame {
 
         for (int i = 0; i < nr.getAnzFaecherBySchuelerId(schuelerId); i++) {
             fach[i] = new JLabel(db.getFachById(faecherIds.get(i)));
-            schriftlich[i] = new JLabel(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerId, 1)));
-            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId, 1)));
-            zusatz[i] = new JLabel(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerId, 1)));
-            endnote[i] = new JLabel(String.valueOf(nr.calculateGrades(faecherIds.get(i), schuelerId)));
+            schriftlich[i] = new JLabel(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerId, actualHalbjahr)));
+            muendlich[i] = new JLabel(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerId, actualHalbjahr)));
+            zusatz[i] = new JLabel(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerId, actualHalbjahr)));
+            endnote[i] = new JLabel(String.valueOf(nr.calculateGrades(faecherIds.get(i), schuelerId, actualHalbjahr)));
             wertung[i] = new JButton("Umschalten");
             fachansicht[i] = new JButton("Mehr Informationen");
 
@@ -240,6 +250,18 @@ public class Gui extends JFrame {
             faecherinfo.add(endnote[i]);
             faecherinfo.add(wertung[i]);
             faecherinfo.add(fachansicht[i]);
+        }
+    }
+
+    private void reloadNoten(int schuelerid) {
+        ArrayList<Integer> faecherIds = db.getFaecherIdBySchuelerId(schuelerid);
+
+        for (int i = 0; i < nr.getAnzFaecherBySchuelerId(schuelerid); i++) {
+            fach[i].setText(db.getFachById(faecherIds.get(i)));
+            schriftlich[i].setText(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerid, actualHalbjahr)));
+            muendlich[i].setText(String.valueOf(db.getAvgNoteMuendlich(faecherIds.get(i), schuelerid, actualHalbjahr)));
+            zusatz[i].setText(String.valueOf(db.getAvgNoteZusatz(faecherIds.get(i), schuelerid, actualHalbjahr)));
+            endnote[i].setText(String.valueOf(nr.calculateGrades(faecherIds.get(i), schuelerid, actualHalbjahr)));
         }
     }
 
