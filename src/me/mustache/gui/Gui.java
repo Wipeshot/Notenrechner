@@ -5,6 +5,7 @@ import me.mustache.logic.LoginLogic;
 import me.mustache.logic.Notenrechner;
 import me.mustache.logic.Semester;
 
+import javax.print.attribute.standard.JobOriginatingUserName;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -53,6 +54,8 @@ public class Gui extends JFrame {
     private JPanel fachinfo = new JPanel();
     private JButton goBackToFaecherInfo = new JButton("Zurück zur Übersicht");
     private JPanel panelNoteSchriftlich = new JPanel();
+    private JPanel panelNoteMuendlich;
+    private JPanel panelNoteZusatz;
     private JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
     private JLabel[] schriftlichEinzelNoten;
     private JTable tabelleSchriftlich;
@@ -303,19 +306,26 @@ public class Gui extends JFrame {
             this.add(faecherinfo);
             this.remove(goBackToFaecherInfo);
             this.remove(panelNoteSchriftlich);
+            this.remove(panelNoteMuendlich);
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
             this.repaint();
         });
 
-        panelNoteSchriftlich.setBounds(this.getBounds().width / 100, (userinfo.getBounds().height * 2) +50, (int) (this.getBounds().width)/2, this.getBounds().height / 5);
+        panelNoteSchriftlich.setBounds(200,200,100,100);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
         panelNoteSchriftlich.setLayout(new GridLayout());
         /*setupNoteSchriftlichForFach(fachId, schuelerId, 1);
 
        // panelNoteSchriftlich.add(schriftlichSchriftzugTable);
        schriftlichSchriftzugTable.setVisible(true);*/
+
+
+       panelNoteMuendlich=new JPanel();
+       panelNoteMuendlich.setBounds(200,350,100,100);
+       panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
+       panelNoteMuendlich.setLayout(new GridLayout());
 
         tabelleSchriftlich = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,1,0),3);
         tabelleSchriftlich.setVisible(true);
@@ -329,10 +339,13 @@ public class Gui extends JFrame {
        panelNoteSchriftlich.add(tabelleSchriftlich);
 
 
+
         goBackToFaecherInfo.setVisible(true);
         this.add(goBackToFaecherInfo);
         panelNoteSchriftlich.setVisible(true);
         this.add(panelNoteSchriftlich);
+        panelNoteMuendlich.setVisible(true);
+        this.add(panelNoteMuendlich);
 
 
         this.repaint();
