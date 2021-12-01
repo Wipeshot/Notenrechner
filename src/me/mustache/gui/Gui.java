@@ -124,7 +124,6 @@ public class Gui extends JFrame {
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
                     prognose = 1;
-                    System.out.println(prognose);
                     reloadNoten(schuelerId);
                 } else {
                     prognose = 0;
