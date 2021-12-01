@@ -55,20 +55,35 @@ public class Database {
      * @param schuelerId - Id of the student
      * @return - Average written grade
      */
-    public float getAvgNoteSchriftlich(int fachId, int schuelerId, int halbjahr) {
-        String avgNote = "SELECT AVG (note)\n"
-                + "FROM note\n"
-                + "WHERE fachid = ?\n"
-                + "AND schuelerid = ?\n"
-                + "AND notentype = ?\n"
-                + "AND halbjahr = ?"
-                + ";";
+    public float getAvgNoteSchriftlich(int fachId, int schuelerId, int halbjahr, int prognose) {
+        String avgNote;
+        if(prognose == 0) {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?\n"
+                    + "AND prognose = ?"
+                    + ";";
+        } else {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?\n"
+                    + ";";
+        }
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 1);
             pstmt.setInt(4, halbjahr);
+            if(prognose == 0) {
+                pstmt.setInt(5, prognose);
+            }
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1);
         } catch (SQLException e) {
@@ -115,20 +130,35 @@ public class Database {
      * @param halbjahr - half year (1/2)
      * @return - ArrayList of oral grades as Integer
      */
-    public float getAvgNoteMuendlich(int fachId, int schuelerId, int halbjahr) {
-        String avgNote = "SELECT AVG (note)\n"
-                + "FROM note\n"
-                + "WHERE fachid = ?\n"
-                + "AND schuelerid = ?\n"
-                + "AND notentype = ?\n"
-                + "AND halbjahr = ?"
-                + ";";
+    public float getAvgNoteMuendlich(int fachId, int schuelerId, int halbjahr, int prognose) {
+        String avgNote;
+        if(prognose == 0) {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?\n"
+                    + "AND prognose = ?"
+                    + ";";
+        } else {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?"
+                    + ";";
+        }
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 2);
             pstmt.setInt(4, halbjahr);
+            if(prognose == 0){
+                pstmt.setInt(5, prognose);
+            }
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1);
         } catch (SQLException e) {
@@ -149,7 +179,6 @@ public class Database {
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
-                + "AND prognose = ?\n"
                 + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
@@ -158,8 +187,7 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 2);
-            pstmt.setInt(4,0);
-            pstmt.setInt(5, halbjahr);
+            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
@@ -175,20 +203,35 @@ public class Database {
      * @param halbjahr - half year (1/2)
      * @return - Average extra grades
      */
-    public float getAvgNoteZusatz(int fachId, int schuelerId, int halbjahr) {
-        String avgNote = "SELECT AVG (note)\n"
-                + "FROM note\n"
-                + "WHERE fachid = ?\n"
-                + "AND schuelerid = ?\n"
-                + "AND notentype = ?\n"
-                + "AND halbjahr = ?"
-                + ";";
+    public float getAvgNoteZusatz(int fachId, int schuelerId, int halbjahr, int prognose) {
+        String avgNote;
+        if(prognose == 0) {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?\n"
+                    + "AND prognose = ?"
+                    + ";";
+        } else {
+            avgNote = "SELECT AVG (note)\n"
+                    + "FROM note\n"
+                    + "WHERE fachid = ?\n"
+                    + "AND schuelerid = ?\n"
+                    + "AND notentype = ?\n"
+                    + "AND halbjahr = ?\n"
+                    + ";";
+        }
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(avgNote);
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
             pstmt.setInt(4, halbjahr);
+            if(prognose == 0){
+                pstmt.setInt(5, prognose);
+            }
             ResultSet rs = pstmt.executeQuery();
             return rs.getFloat(1);
         } catch (SQLException e) {
@@ -209,7 +252,6 @@ public class Database {
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
-                + "AND prognose = ?\n"
                 + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
@@ -218,8 +260,7 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
-            pstmt.setInt(4,0);
-            pstmt.setInt(5, halbjahr);
+            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;

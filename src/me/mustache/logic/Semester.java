@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Semester {
 
-    private Database db = Database.getInstance();
+    private final Database db = Database.getInstance();
 
     public Semester(){
 
