@@ -5,7 +5,6 @@ import me.mustache.logic.LoginLogic;
 import me.mustache.logic.Notenrechner;
 import me.mustache.logic.Semester;
 
-import javax.print.attribute.standard.JobOriginatingUserName;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -60,13 +59,22 @@ public class Gui extends JFrame {
     private final JPanel fachinfo = new JPanel();
     private final JButton goBackToFaecherInfo = new JButton("Zurück zur Übersicht");
     private final JPanel panelNoteSchriftlich = new JPanel();
-    private JPanel panelNoteMuendlich;
-    private JPanel panelNoteZusatz;
+    private JPanel panelNoteMuendlich = new JPanel();
+    private JPanel panelNoteZusatz = new JPanel();
     private final JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
     private JLabel[] schriftlichEinzelNoten;
+    private JLabel[] muendlichEinzelNoten;
+    private JLabel[] zusatzEinzelNoten;
     private JTable tabelleSchriftlich;
     private JTable tabelleMuendlich;
     private JTable tabelleZusatz;
+    private JPanel panel1;
+    private JButton noteHinzufuegen = new JButton("Note hinzufügen");
+    private JButton noteLoeschen = new JButton("Note löschen");
+    private JButton schriftlichButton = new JButton("Schriftlich");
+    private JButton muendlichButton = new JButton("Mündlich");
+    private JButton zusatzButton = new JButton("Zusätzliches Projekt");
+    private JFrame notenFrame;
 
     public Gui() {
         this.setSize(1280, 720);
@@ -95,8 +103,8 @@ public class Gui extends JFrame {
         login.addActionListener(e -> {
             if (new LoginLogic().checkPassword(benutzername.getText(), String.valueOf(passwort.getPassword())))
                 setActualHalbjahr(new Semester().calculateNewestSemester(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase())));
-                setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
-                wrongPassword();
+            setupUserscreen(db.getSchuelerIdByUsername(benutzername.getText().toLowerCase()));
+            wrongPassword();
         });
     }
 
@@ -116,13 +124,13 @@ public class Gui extends JFrame {
         prognoseCheckBox = new JCheckBox();
         prognoseLabel = new JLabel("Prognose: ");
 
-        prognoseLabel.setBounds(1164,0,70,50);
-        prognoseCheckBox.setBounds(1234,0,50,50);
+        prognoseLabel.setBounds(1164, 0, 70, 50);
+        prognoseCheckBox.setBounds(1234, 0, 50, 50);
 
         prognoseCheckBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
                     prognose = 1;
                     reloadNoten(schuelerId);
                 } else {
@@ -139,7 +147,7 @@ public class Gui extends JFrame {
         userinfo.add(halbjahrButton);
 
         halbjahrButton.addActionListener(e -> {
-            if(!halbjahrFrameBool) halbjahrAendern(schuelerId);
+            if (!halbjahrFrameBool) halbjahrAendern(schuelerId);
         });
 
         this.add(prognoseCheckBox);
@@ -154,7 +162,7 @@ public class Gui extends JFrame {
         halbjahrFrameBool = true;
         halbjahrFrame = new JFrame("Halbjahr ändern");
         halbjahrFrame.setUndecorated(true);
-        halbjahrFrame.setSize(250,200);
+        halbjahrFrame.setSize(250, 238);
         halbjahrFrame.setLayout(null);
         halbjahrFrame.setAlwaysOnTop(true);
         halbjahrFrame.setLocationRelativeTo(null);
@@ -167,8 +175,8 @@ public class Gui extends JFrame {
         halbjahrButtons[2] = new JButton("J2, 1. Halbjahr");
         halbjahrButtons[3] = new JButton("J2, 2. Halbjahr");
         int k = 0;
-        for(JButton btn : halbjahrButtons){
-            btn.setBounds(0,0+k, 250, 50);
+        for (JButton btn : halbjahrButtons) {
+            btn.setBounds(0, 0 + k, 250, 50);
             k += 50;
             halbjahrFrame.add(btn);
         }
@@ -211,7 +219,7 @@ public class Gui extends JFrame {
         faecherinfo.setLayout(new GridLayout(nr.getAnzFaecherBySchuelerId(schuelerId) + 1, 7));
         faecherinfo.setBorder(new LineBorder(Color.GREEN));
         faecherinfo.setBounds(0, 50, 1264, nr.getAnzFaecherBySchuelerId(schuelerId) + 1 * 70);
-        faecherinfo.setBounds(0,50,1264, nr.getAnzFaecherBySchuelerId(schuelerId)*40);
+        faecherinfo.setBounds(0, 50, 1264, nr.getAnzFaecherBySchuelerId(schuelerId) * 40);
         faecherinfo.setVisible(true);
 
         colmBezeichnung = new JLabel[7];
@@ -301,9 +309,9 @@ public class Gui extends JFrame {
         });
     }
 
-    private void setupWertung(int fachId, int schuelerId, int arrayPlace){
-        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId))*100) + "%");
-        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId, db.getKlasseIdBySchuelerId(schuelerId))*100) + "%");
+    private void setupWertung(int fachId, int schuelerId, int arrayPlace) {
+        schriftlich[arrayPlace].setText(Math.round(db.getWertungSchriftlich(fachId, db.getKlasseIdBySchuelerId(schuelerId)) * 100) + "%");
+        muendlich[arrayPlace].setText(Math.round(db.getWertungMuendlich(fachId, db.getKlasseIdBySchuelerId(schuelerId)) * 100) + "%");
         zusatz[arrayPlace].setText(Math.round(db.getWertungZusatz(fachId, db.getKlasseIdBySchuelerId(schuelerId)) * 100) + "%");
 
 
@@ -325,48 +333,144 @@ public class Gui extends JFrame {
             this.remove(goBackToFaecherInfo);
             this.remove(panelNoteSchriftlich);
             this.remove(panelNoteMuendlich);
+            this.remove(panelNoteZusatz);
+            remove(notenFrame);
+            this.remove(noteHinzufuegen);
+            this.remove(noteLoeschen);
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
             this.repaint();
         });
 
-        panelNoteSchriftlich.setBounds(200,200,100,100);
+        noteHinzufuegen.setBounds(0, 50, 200, 50);
+        noteHinzufuegen.addActionListener(e -> {
+
+            notenFrame = new JFrame("Note hinzufügen");
+            notenFrame.setSize(250, 220);
+            notenFrame.setUndecorated(true);
+            notenFrame.setLayout(null);
+            notenFrame.setAlwaysOnTop(true);
+            notenFrame.setLocationRelativeTo(null);
+            notenFrame.setResizable(false);
+            notenFrame.setVisible(true);
+            schriftlichButton.setBounds(0, 0, 250, 60);
+            muendlichButton.setBounds(0, 61, 250, 60);
+            zusatzButton.setBounds(0, 122, 250, 60);
+            notenFrame.add(schriftlichButton);
+            notenFrame.add(muendlichButton);
+            notenFrame.add(zusatzButton);
+
+        });
+
+        noteLoeschen.setBounds(201, 50, 200, 50);
+        noteLoeschen.addActionListener(e -> {
+
+            notenFrame = new JFrame("Note löschen");
+            notenFrame.setSize(250, 220);
+            notenFrame.setUndecorated(true);
+            notenFrame.setLayout(null);
+            notenFrame.setAlwaysOnTop(true);
+            notenFrame.setLocationRelativeTo(null);
+            notenFrame.setResizable(false);
+            notenFrame.setVisible(true);
+            schriftlichButton.setBounds(0, 0, 250, 60);
+            muendlichButton.setBounds(0, 61, 250, 60);
+            zusatzButton.setBounds(0, 122, 250, 60);
+            notenFrame.add(schriftlichButton);
+            notenFrame.add(muendlichButton);
+            notenFrame.add(zusatzButton);
+
+
+        });
+
+        schriftlichButton.addActionListener(e -> {
+            notenFrame.setVisible(false);
+            String[] HalbjahrToChooseSchriftlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
+            String getHalbjahrSchriftlich = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Welches Halbjahr möchtest du auswählen ?",
+                    "Halbjahr auswählen",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    HalbjahrToChooseSchriftlich,
+                    HalbjahrToChooseSchriftlich[3]);
+
+
+
+        });
+
+        muendlichButton.addActionListener(e -> {
+            notenFrame.setVisible(false);
+            String[] HalbjahrToChooseMuendlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
+            String getHalbjahrMuendlich = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Welches Halbjahr möchtest du auswählen ?",
+                    "Halbjahr auswählen",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    HalbjahrToChooseMuendlich,
+                    HalbjahrToChooseMuendlich[3]);
+
+        });
+
+        zusatzButton.addActionListener(e -> {
+            //TODO Notenframe bleibt beim Entfernen trotzdem noch da wenn man einmal zum userscreen wechselt und wieder zurück (Zeile:419,404,387)
+            notenFrame.setVisible(false);
+            String[] HalbjahrToChooseZusatz = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
+            String getHalbjahrZusatz = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Welches Halbjahr möchtest du auswählen ?",
+                    "Halbjahr auswählen",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    HalbjahrToChooseZusatz,
+                    HalbjahrToChooseZusatz[3]);
+
+        });
+
+
+        panelNoteSchriftlich.setBounds(0, 100, 426, 570);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteSchriftlich.setLayout(new GridLayout());
-        /*setupNoteSchriftlichForFach(fachId, schuelerId, 1);
+        panelNoteSchriftlich.setLayout(null);
 
-       // panelNoteSchriftlich.add(schriftlichSchriftzugTable);
-       schriftlichSchriftzugTable.setVisible(true);*/
+        panelNoteMuendlich.setBounds(427, 100, 426, 570);
+        panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
+        panelNoteMuendlich.setLayout(null);
 
 
-       panelNoteMuendlich=new JPanel();
-       panelNoteMuendlich.setBounds(200,350,100,100);
-       panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
-       panelNoteMuendlich.setLayout(new GridLayout());
+        panelNoteZusatz.setBounds(854, 100, 412, 570);
+        panelNoteZusatz.setBorder(new LineBorder(Color.green));
+        panelNoteZusatz.setLayout(null);
 
-        tabelleSchriftlich = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,1,0),3);
+        tabelleSchriftlich = new JTable();
         tabelleSchriftlich.setVisible(true);
 
-       tabelleMuendlich = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,2,0),3);
-       tabelleSchriftlich.setVisible(true);
+        tabelleMuendlich = new JTable();
+        tabelleSchriftlich.setVisible(true);
 
-       tabelleZusatz = new JTable(db.getAnzNotenBySchuelerId(schuelerId,fachId,3,0),3);
-       tabelleSchriftlich.setVisible(true);
+        tabelleZusatz = new JTable();
+        tabelleSchriftlich.setVisible(true);
 
-       panelNoteSchriftlich.add(tabelleSchriftlich);
-
+        panelNoteSchriftlich.add(tabelleSchriftlich);
+        panelNoteMuendlich.add(tabelleMuendlich);
+        panelNoteZusatz.add(tabelleZusatz);
 
 
         goBackToFaecherInfo.setVisible(true);
         this.add(goBackToFaecherInfo);
+        noteHinzufuegen.setVisible(true);
+        this.add(noteHinzufuegen);
+        noteLoeschen.setVisible(true);
+        this.add(noteLoeschen);
         panelNoteSchriftlich.setVisible(true);
         this.add(panelNoteSchriftlich);
         panelNoteMuendlich.setVisible(true);
         this.add(panelNoteMuendlich);
-
-
+        panelNoteZusatz.setVisible(true);
+        this.add(panelNoteZusatz);
         this.repaint();
+
     }
 
     private void setupNoteSchriftlichForFach(int fachId, int schuelerId, int halbjahr) {
@@ -378,9 +482,42 @@ public class Gui extends JFrame {
             this.schriftlichEinzelNoten[i] = new JLabel();
             this.schriftlichEinzelNoten[i].setText(String.valueOf(notenSchriftlichList.get(i)));
             this.panelNoteSchriftlich.add(this.schriftlichEinzelNoten[i]);
+            this.panelNoteSchriftlich.setVisible(true);
             this.schriftlichEinzelNoten[i].setVisible(true);
+
         }
     }
+
+    private void setupNoteMuendlichForFach(int fachId, int schuelerId, int halbjahr) {
+        ArrayList<Integer> notenMuendlichList = db.getNotenMuendlich(fachId, schuelerId, halbjahr);
+
+        this.muendlichEinzelNoten = new JLabel[notenMuendlichList.size()];
+        for (int i = 0; i < notenMuendlichList.size(); i++) {
+
+            this.muendlichEinzelNoten[i] = new JLabel();
+            this.muendlichEinzelNoten[i].setText(String.valueOf(notenMuendlichList.get(i)));
+            this.panelNoteMuendlich.add(this.muendlichEinzelNoten[i]);
+            this.muendlichEinzelNoten[i].setVisible(true);
+
+        }
+
+    }
+
+    private void setupNoteZusatzForFach(int fachId, int schuelerId, int halbjahr) {
+        ArrayList<Integer> notenZusatzList = db.getNotenZusatz(fachId, schuelerId, halbjahr);
+
+        this.zusatzEinzelNoten = new JLabel[notenZusatzList.size()];
+        for (int i = 0; i < notenZusatzList.size(); i++) {
+
+            this.zusatzEinzelNoten[i] = new JLabel();
+            this.zusatzEinzelNoten[i].setText(String.valueOf(notenZusatzList.get(i)));
+            this.panelNoteZusatz.add(this.zusatzEinzelNoten[i]);
+            this.zusatzEinzelNoten[i].setVisible(true);
+
+        }
+
+    }
+
 
     private int getActualHalbjahr() {
         return actualHalbjahr;
