@@ -348,7 +348,6 @@ public class Gui extends JFrame {
 
             notenFrame = new JFrame("Note hinzufügen");
             notenFrame.setSize(250, 220);
-            notenFrame.setUndecorated(true);
             notenFrame.setLayout(null);
             notenFrame.setAlwaysOnTop(true);
             notenFrame.setLocationRelativeTo(null);
@@ -363,12 +362,13 @@ public class Gui extends JFrame {
 
         });
 
+
+
         noteLoeschen.setBounds(201, 50, 200, 50);
         noteLoeschen.addActionListener(e -> {
 
             notenFrame = new JFrame("Note löschen");
             notenFrame.setSize(250, 220);
-            notenFrame.setUndecorated(true);
             notenFrame.setLayout(null);
             notenFrame.setAlwaysOnTop(true);
             notenFrame.setLocationRelativeTo(null);
@@ -385,7 +385,8 @@ public class Gui extends JFrame {
         });
 
         schriftlichButton.addActionListener(e -> {
-            notenFrame.setVisible(false);
+            remove(notenFrame);
+            notenFrame.dispose();
             String[] HalbjahrToChooseSchriftlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrSchriftlich = (String) JOptionPane.showInputDialog(
                     null,
@@ -401,7 +402,8 @@ public class Gui extends JFrame {
         });
 
         muendlichButton.addActionListener(e -> {
-            notenFrame.setVisible(false);
+            remove(notenFrame);
+            notenFrame.dispose();
             String[] HalbjahrToChooseMuendlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrMuendlich = (String) JOptionPane.showInputDialog(
                     null,
@@ -415,8 +417,9 @@ public class Gui extends JFrame {
         });
 
         zusatzButton.addActionListener(e -> {
+            remove(notenFrame);
+            notenFrame.dispose();
             //TODO Notenframe bleibt beim Entfernen trotzdem noch da wenn man einmal zum userscreen wechselt und wieder zurück (Zeile:419,404,387)
-            notenFrame.setVisible(false);
             String[] HalbjahrToChooseZusatz = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrZusatz = (String) JOptionPane.showInputDialog(
                     null,
