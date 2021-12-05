@@ -326,7 +326,7 @@ public class Gui extends JFrame {
 
     private void setupFachinfo(int fachId, int schuelerId) {
         this.remove(faecherinfo);
-
+        notenFrame = new JFrame();
         goBackToFaecherInfo.setBounds(this.getBounds().width - 200, userinfo.getBounds().height, 200, 50);
         goBackToFaecherInfo.addActionListener(e -> {
             this.add(faecherinfo);
@@ -334,7 +334,7 @@ public class Gui extends JFrame {
             this.remove(panelNoteSchriftlich);
             this.remove(panelNoteMuendlich);
             this.remove(panelNoteZusatz);
-            remove(notenFrame);
+            this.remove(notenFrame);
             this.remove(noteHinzufuegen);
             this.remove(noteLoeschen);
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
@@ -346,7 +346,7 @@ public class Gui extends JFrame {
         noteHinzufuegen.setBounds(0, 50, 200, 50);
         noteHinzufuegen.addActionListener(e -> {
 
-            notenFrame = new JFrame("Note hinzufügen");
+            notenFrame.setTitle("Note hinzufügen");
             notenFrame.setSize(250, 220);
             notenFrame.setLayout(null);
             notenFrame.setAlwaysOnTop(true);
@@ -367,7 +367,7 @@ public class Gui extends JFrame {
         noteLoeschen.setBounds(201, 50, 200, 50);
         noteLoeschen.addActionListener(e -> {
 
-            notenFrame = new JFrame("Note löschen");
+            notenFrame.setTitle("Note löschen");
             notenFrame.setSize(250, 220);
             notenFrame.setLayout(null);
             notenFrame.setAlwaysOnTop(true);
@@ -385,8 +385,7 @@ public class Gui extends JFrame {
         });
 
         schriftlichButton.addActionListener(e -> {
-            remove(notenFrame);
-            notenFrame.dispose();
+            notenFrame.setVisible(false);
             String[] HalbjahrToChooseSchriftlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrSchriftlich = (String) JOptionPane.showInputDialog(
                     null,
@@ -402,8 +401,7 @@ public class Gui extends JFrame {
         });
 
         muendlichButton.addActionListener(e -> {
-            remove(notenFrame);
-            notenFrame.dispose();
+            notenFrame.setVisible(false);
             String[] HalbjahrToChooseMuendlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrMuendlich = (String) JOptionPane.showInputDialog(
                     null,
@@ -417,8 +415,7 @@ public class Gui extends JFrame {
         });
 
         zusatzButton.addActionListener(e -> {
-            remove(notenFrame);
-            notenFrame.dispose();
+            notenFrame.setVisible(false);
             //TODO Notenframe bleibt beim Entfernen trotzdem noch da wenn man einmal zum userscreen wechselt und wieder zurück (Zeile:419,404,387)
             String[] HalbjahrToChooseZusatz = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
             String getHalbjahrZusatz = (String) JOptionPane.showInputDialog(
