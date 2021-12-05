@@ -350,6 +350,8 @@ public class Gui extends JFrame {
                 goBackToFaecherInfo.removeActionListener(act);
             }
             panelNoteSchriftlich.removeAll();
+            panelNoteMuendlich.removeAll();
+            panelNoteZusatz.removeAll();
             this.repaint();
         });
 
