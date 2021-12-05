@@ -95,17 +95,14 @@ public class Database {
     /**
      * @param fachId - Id of the subject
      * @param schuelerId - Id of the student
-     * @param halbjahr - half year (1/2)
      * @return - ArrayList of written grades as Integer
      */
-    public ArrayList<Integer> getNotenSchriftlich(int fachId, int schuelerId, int halbjahr){
+    public ArrayList<Integer> getNotenSchriftlich(int fachId, int schuelerId){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
-                + "AND prognose = ?\n"
-                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -113,14 +110,66 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 1);
-            pstmt.setInt(4,0);
-            pstmt.setInt(5, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    public ArrayList<Integer> getNotenId(int fachId, int schuelerId, int notentype) {
+        String note = "SELECT notenId\n"
+                + "FROM note\n"
+                + "WHERE fachid = ?\n"
+                + "AND schuelerid = ?\n"
+                + "AND notentype = ?\n"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            ArrayList<Integer> notenId = new ArrayList<>();
+            pstmt = conn.prepareStatement(note);
+            pstmt.setInt(1, fachId);
+            pstmt.setInt(2, schuelerId);
+            pstmt.setInt(3, notentype);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) notenId.add(rs.getInt(1));
+            return notenId;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public int getHalbJahrByNotenId(int noteId) {
+        String note = "SELECT halbjahr\n"
+                + "FROM note\n"
+                + "WHERE notenid = ?\n"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(note);
+            pstmt.setInt(1, noteId);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
+
+    public int getPrognoseByNotenId(int noteId) {
+        String note = "SELECT prognose\n"
+                + "FROM note\n"
+                + "WHERE notenid = ?\n"
+                + ";";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            pstmt = conn.prepareStatement(note);
+            pstmt.setInt(1, noteId);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 
@@ -170,16 +219,14 @@ public class Database {
     /**
      * @param fachId - Id of the subject
      * @param schuelerId - Id of the student
-     * @param halbjahr - half year (1/2)
      * @return - ArrayList of written grades as Integer
      */
-    public ArrayList<Integer> getNotenMuendlich(int fachId, int schuelerId, int halbjahr){
+    public ArrayList<Integer> getNotenMuendlich(int fachId, int schuelerId){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
-                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -187,7 +234,6 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 2);
-            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
@@ -243,16 +289,14 @@ public class Database {
     /**
      * @param fachId - Id of the subject
      * @param schuelerId - Id of the student
-     * @param halbjahr - half year (1/2)
      * @return - ArrayList of extra grades as Integer
      */
-    public ArrayList<Integer> getNotenZusatz(int fachId, int schuelerId, int halbjahr){
+    public ArrayList<Integer> getNotenZusatz(int fachId, int schuelerId){
         String note = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE fachid = ?\n"
                 + "AND schuelerid = ?\n"
                 + "AND notentype = ?\n"
-                + "AND halbjahr = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             ArrayList<Integer> noten = new ArrayList<>();
@@ -260,7 +304,6 @@ public class Database {
             pstmt.setInt(1, fachId);
             pstmt.setInt(2, schuelerId);
             pstmt.setInt(3, 3);
-            pstmt.setInt(4, halbjahr);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) noten.add(rs.getInt(1));
             return noten;
@@ -608,26 +651,21 @@ public class Database {
         }
     }
 
-    public  int getAnzNotenBySchuelerId(int schuelerId, int fachId, int notentype, int prognose){
+    public  int getAnzNotenBySchuelerId(int schuelerId, int fachId){
         String getAnzNoten = "SELECT note\n"
                 + "FROM note\n"
                 + "WHERE schuelerid = ?\n"
                 + "AND fachId = ?\n"
-                + "AND notentype = ?\n"
-                + "AND prognose = ?"
                 + ";";
         ArrayList<Integer> forCal = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(getAnzNoten);
             pstmt.setInt(1, schuelerId);
             pstmt.setInt(2, fachId);
-            pstmt.setInt(3, notentype);
-            pstmt.setInt(4, prognose);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()){
                 forCal.add(rs.getInt(1));
             }
-            System.out.println(forCal.size());
             return forCal.size();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

@@ -61,20 +61,29 @@ public class Gui extends JFrame {
     private final JPanel panelNoteSchriftlich = new JPanel();
     private JPanel panelNoteMuendlich = new JPanel();
     private JPanel panelNoteZusatz = new JPanel();
-    private final JLabel schriftlichSchriftzugTable = new JLabel("Schriftlich");
+    private final JLabel schriftlichSchriftzug = new JLabel("Schriftlich");
     private JLabel[] schriftlichEinzelNoten;
+    private JLabel[] schriftlichNotenId;
+    private JLabel[] schriftlichNoteSemester;
+    private JLabel[] schriftlichPrognose;
     private JLabel[] muendlichEinzelNoten;
+    private JLabel[] muendlichNotenId;
+    private JLabel[] muendlichNoteSemester;
+    private JLabel[] muendlichPrognose;
     private JLabel[] zusatzEinzelNoten;
-    private JTable tabelleSchriftlich;
-    private JTable tabelleMuendlich;
-    private JTable tabelleZusatz;
-    private JPanel panel1;
+    private JLabel[] zusatzNotenId;
+    private JLabel[] zusatzNoteSemester;
+    private JLabel[] zusatzPrognose;
     private JButton noteHinzufuegen = new JButton("Note hinzufügen");
     private JButton noteLoeschen = new JButton("Note löschen");
     private JButton schriftlichButton = new JButton("Schriftlich");
     private JButton muendlichButton = new JButton("Mündlich");
     private JButton zusatzButton = new JButton("Zusätzliches Projekt");
     private JFrame notenFrame;
+    private JLabel idTopper;
+    private JLabel noteTopper;
+    private JLabel semesterTopper;
+    private JLabel prognoseTopper;
 
     public Gui() {
         this.setSize(1280, 720);
@@ -340,12 +349,36 @@ public class Gui extends JFrame {
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
+            panelNoteSchriftlich.removeAll();
             this.repaint();
         });
 
+        setupListenerAddRemoveButton(fachId, schuelerId);
+        setupNoteSchriftlichForFach(fachId, schuelerId);
+        setupNoteMuendlichForFach(fachId, schuelerId);
+        setupNoteZusatzForFach(fachId, schuelerId);
+
+        /*
+        panelNoteZusatz.setBounds(854, 100, 412, 570);
+        panelNoteZusatz.setBorder(new LineBorder(Color.green));
+        panelNoteZusatz.setLayout(null);*/
+
+        goBackToFaecherInfo.setVisible(true);
+        this.add(goBackToFaecherInfo);
+        noteHinzufuegen.setVisible(true);
+        this.add(noteHinzufuegen);
+        noteLoeschen.setVisible(true);
+        this.add(noteLoeschen);
+        panelNoteMuendlich.setVisible(true);
+        this.add(panelNoteMuendlich);
+        panelNoteZusatz.setVisible(true);
+        this.add(panelNoteZusatz);
+        this.repaint();
+    }
+
+    private void setupListenerAddRemoveButton(int fachId, int schuelerId) {
         noteHinzufuegen.setBounds(0, 50, 200, 50);
         noteHinzufuegen.addActionListener(e -> {
-
             notenFrame.setTitle("Note hinzufügen");
             notenFrame.setSize(250, 220);
             notenFrame.setLayout(null);
@@ -359,10 +392,7 @@ public class Gui extends JFrame {
             notenFrame.add(schriftlichButton);
             notenFrame.add(muendlichButton);
             notenFrame.add(zusatzButton);
-
         });
-
-
 
         noteLoeschen.setBounds(201, 50, 200, 50);
         noteLoeschen.addActionListener(e -> {
@@ -428,94 +458,141 @@ public class Gui extends JFrame {
                     HalbjahrToChooseZusatz[3]);
 
         });
+    }
 
-
-        panelNoteSchriftlich.setBounds(0, 100, 426, 570);
+    private void setupNoteSchriftlichForFach(int fachId, int schuelerId) {
+        ArrayList<Integer> notenIdSchriftlich = db.getNotenId(fachId, schuelerId,1);
+        ArrayList<Integer> notenSchriftlichList = db.getNotenSchriftlich(fachId, schuelerId);
+        panelNoteSchriftlich.setBounds(0, 100, 426, 30*notenIdSchriftlich.size()+30);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteSchriftlich.setLayout(null);
-
-        panelNoteMuendlich.setBounds(427, 100, 426, 570);
-        panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteMuendlich.setLayout(null);
-
-
-        panelNoteZusatz.setBounds(854, 100, 412, 570);
-        panelNoteZusatz.setBorder(new LineBorder(Color.green));
-        panelNoteZusatz.setLayout(null);
-
-        tabelleSchriftlich = new JTable();
-        tabelleSchriftlich.setVisible(true);
-
-        tabelleMuendlich = new JTable();
-        tabelleSchriftlich.setVisible(true);
-
-        tabelleZusatz = new JTable();
-        tabelleSchriftlich.setVisible(true);
-
-        panelNoteSchriftlich.add(tabelleSchriftlich);
-        panelNoteMuendlich.add(tabelleMuendlich);
-        panelNoteZusatz.add(tabelleZusatz);
-
-
-        goBackToFaecherInfo.setVisible(true);
-        this.add(goBackToFaecherInfo);
-        noteHinzufuegen.setVisible(true);
-        this.add(noteHinzufuegen);
-        noteLoeschen.setVisible(true);
-        this.add(noteLoeschen);
+        panelNoteSchriftlich.setLayout(new GridLayout(notenIdSchriftlich.size()+1, 4));
         panelNoteSchriftlich.setVisible(true);
-        this.add(panelNoteSchriftlich);
-        panelNoteMuendlich.setVisible(true);
-        this.add(panelNoteMuendlich);
-        panelNoteZusatz.setVisible(true);
-        this.add(panelNoteZusatz);
-        this.repaint();
+        schriftlichSchriftzug.setBounds(0,100,426,30);
+        idTopper = new JLabel("ID");
+        noteTopper = new JLabel("Note");
+        semesterTopper = new JLabel("Halbjahr");
+        prognoseTopper = new JLabel("Prognose");
+        panelNoteSchriftlich.add(idTopper);
+        panelNoteSchriftlich.add(noteTopper);
+        panelNoteSchriftlich.add(semesterTopper);
+        panelNoteSchriftlich.add(prognoseTopper);
 
-    }
+        schriftlichNotenId = new JLabel[notenSchriftlichList.size()];
+        schriftlichEinzelNoten = new JLabel[notenSchriftlichList.size()];
+        schriftlichNoteSemester = new  JLabel[notenSchriftlichList.size()];
+        schriftlichPrognose = new JLabel[notenSchriftlichList.size()];
 
-    private void setupNoteSchriftlichForFach(int fachId, int schuelerId, int halbjahr) {
-        ArrayList<Integer> notenSchriftlichList = db.getNotenSchriftlich(fachId, schuelerId, halbjahr);
-
-        this.schriftlichEinzelNoten = new JLabel[notenSchriftlichList.size()];
         for (int i = 0; i < notenSchriftlichList.size(); i++) {
+            schriftlichNotenId[i] = new JLabel();
+            schriftlichEinzelNoten[i] = new JLabel();
+            schriftlichNoteSemester[i] = new JLabel();
+            schriftlichPrognose[i] = new JLabel();
+            schriftlichNotenId[i].setText(String.valueOf(notenIdSchriftlich.get(i)));
+            schriftlichEinzelNoten[i].setText(String.valueOf(notenSchriftlichList.get(i)));
+            schriftlichNoteSemester[i].setText(String.valueOf(db.getHalbJahrByNotenId(notenIdSchriftlich.get(i))));
+            if (db.getPrognoseByNotenId(notenIdSchriftlich.get(i)) == 1) {
+                schriftlichPrognose[i].setText("Ja");
+            } else {
+                schriftlichPrognose[i].setText("Nein");
+            }
 
-            this.schriftlichEinzelNoten[i] = new JLabel();
-            this.schriftlichEinzelNoten[i].setText(String.valueOf(notenSchriftlichList.get(i)));
-            this.panelNoteSchriftlich.add(this.schriftlichEinzelNoten[i]);
-            this.panelNoteSchriftlich.setVisible(true);
-            this.schriftlichEinzelNoten[i].setVisible(true);
-
+            panelNoteSchriftlich.add(schriftlichNotenId[i]);
+            panelNoteSchriftlich.add(schriftlichEinzelNoten[i]);
+            panelNoteSchriftlich.add(schriftlichNoteSemester[i]);
+            panelNoteSchriftlich.add(schriftlichPrognose[i]);
         }
+        this.add(panelNoteSchriftlich);
+        panelNoteSchriftlich.updateUI();
     }
 
-    private void setupNoteMuendlichForFach(int fachId, int schuelerId, int halbjahr) {
-        ArrayList<Integer> notenMuendlichList = db.getNotenMuendlich(fachId, schuelerId, halbjahr);
+    private void setupNoteMuendlichForFach(int fachId, int schuelerId) {
+        ArrayList<Integer> notenIdMuendlich = db.getNotenId(fachId, schuelerId,2);
+        ArrayList<Integer> notenMuendlichList = db.getNotenMuendlich(fachId, schuelerId);
+        panelNoteMuendlich.setBounds(427, 100, 426, 30*notenIdMuendlich.size()+30);
+        panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
+        panelNoteMuendlich.setLayout(new GridLayout(notenIdMuendlich.size()+1, 4));
+        panelNoteMuendlich.setVisible(true);
+        idTopper = new JLabel("ID");
+        noteTopper = new JLabel("Note");
+        semesterTopper = new JLabel("Halbjahr");
+        prognoseTopper = new JLabel("Prognose");
+        //muendlichSchriftzug.setBounds(0,100,426,30);
+        panelNoteMuendlich.add(idTopper);
+        panelNoteMuendlich.add(noteTopper);
+        panelNoteMuendlich.add(semesterTopper);
+        panelNoteMuendlich.add(prognoseTopper);
 
-        this.muendlichEinzelNoten = new JLabel[notenMuendlichList.size()];
+        muendlichNotenId = new JLabel[notenMuendlichList.size()];
+        muendlichEinzelNoten = new JLabel[notenMuendlichList.size()];
+        muendlichNoteSemester = new  JLabel[notenMuendlichList.size()];
+        muendlichPrognose = new JLabel[notenMuendlichList.size()];
+
         for (int i = 0; i < notenMuendlichList.size(); i++) {
+            muendlichNotenId[i] = new JLabel();
+            muendlichEinzelNoten[i] = new JLabel();
+            muendlichNoteSemester[i] = new JLabel();
+            muendlichPrognose[i] = new JLabel();
+            muendlichNotenId[i].setText(String.valueOf(notenIdMuendlich.get(i)));
+            muendlichEinzelNoten[i].setText(String.valueOf(notenMuendlichList.get(i)));
+            muendlichNoteSemester[i].setText(String.valueOf(db.getHalbJahrByNotenId(notenIdMuendlich.get(i))));
+            if (db.getPrognoseByNotenId(notenIdMuendlich.get(i)) == 1) {
+                muendlichPrognose[i].setText("Ja");
+            } else {
+                muendlichPrognose[i].setText("Nein");
+            }
 
-            this.muendlichEinzelNoten[i] = new JLabel();
-            this.muendlichEinzelNoten[i].setText(String.valueOf(notenMuendlichList.get(i)));
-            this.panelNoteMuendlich.add(this.muendlichEinzelNoten[i]);
-            this.muendlichEinzelNoten[i].setVisible(true);
-
+            panelNoteMuendlich.add(muendlichNotenId[i]);
+            panelNoteMuendlich.add(muendlichEinzelNoten[i]);
+            panelNoteMuendlich.add(muendlichNoteSemester[i]);
+            panelNoteMuendlich.add(muendlichPrognose[i]);
         }
-
+        this.add(panelNoteMuendlich);
+        panelNoteMuendlich.updateUI();
     }
 
-    private void setupNoteZusatzForFach(int fachId, int schuelerId, int halbjahr) {
-        ArrayList<Integer> notenZusatzList = db.getNotenZusatz(fachId, schuelerId, halbjahr);
+    private void setupNoteZusatzForFach(int fachId, int schuelerId) {
+        ArrayList<Integer> notenIdZusatz = db.getNotenId(fachId, schuelerId,3);
+        ArrayList<Integer> notenZusatzList = db.getNotenZusatz(fachId, schuelerId);
+        panelNoteZusatz.setBounds(854, 100, 426, 30*notenIdZusatz.size()+30);
+        panelNoteZusatz.setBorder(new LineBorder(Color.GREEN));
+        panelNoteZusatz.setLayout(new GridLayout(notenIdZusatz.size()+1, 4));
+        panelNoteZusatz.setVisible(true);
+        idTopper = new JLabel("ID");
+        noteTopper = new JLabel("Note");
+        semesterTopper = new JLabel("Halbjahr");
+        prognoseTopper = new JLabel("Prognose");
+        //muendlichSchriftzug.setBounds(0,100,426,30);
+        panelNoteZusatz.add(idTopper);
+        panelNoteZusatz.add(noteTopper);
+        panelNoteZusatz.add(semesterTopper);
+        panelNoteZusatz.add(prognoseTopper);
 
-        this.zusatzEinzelNoten = new JLabel[notenZusatzList.size()];
+        zusatzNotenId = new JLabel[notenZusatzList.size()];
+        zusatzEinzelNoten = new JLabel[notenZusatzList.size()];
+        zusatzNoteSemester = new  JLabel[notenZusatzList.size()];
+        zusatzPrognose = new JLabel[notenZusatzList.size()];
+
         for (int i = 0; i < notenZusatzList.size(); i++) {
+            zusatzNotenId[i] = new JLabel();
+            zusatzEinzelNoten[i] = new JLabel();
+            zusatzNoteSemester[i] = new JLabel();
+            zusatzPrognose[i] = new JLabel();
+            zusatzNotenId[i].setText(String.valueOf(notenIdZusatz.get(i)));
+            zusatzEinzelNoten[i].setText(String.valueOf(notenZusatzList.get(i)));
+            zusatzNoteSemester[i].setText(String.valueOf(db.getHalbJahrByNotenId(notenIdZusatz.get(i))));
+            if (db.getPrognoseByNotenId(notenIdZusatz.get(i)) == 1) {
+                zusatzPrognose[i].setText("Ja");
+            } else {
+                zusatzPrognose[i].setText("Nein");
+            }
 
-            this.zusatzEinzelNoten[i] = new JLabel();
-            this.zusatzEinzelNoten[i].setText(String.valueOf(notenZusatzList.get(i)));
-            this.panelNoteZusatz.add(this.zusatzEinzelNoten[i]);
-            this.zusatzEinzelNoten[i].setVisible(true);
-
+            panelNoteZusatz.add(zusatzNotenId[i]);
+            panelNoteZusatz.add(zusatzEinzelNoten[i]);
+            panelNoteZusatz.add(zusatzNoteSemester[i]);
+            panelNoteZusatz.add(zusatzPrognose[i]);
         }
-
+        this.add(panelNoteZusatz);
+        panelNoteZusatz.updateUI();
     }
 
 
