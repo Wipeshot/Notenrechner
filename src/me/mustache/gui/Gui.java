@@ -22,6 +22,11 @@ public class Gui extends JFrame {
     private boolean loeschen = false;
     private int choosedHalbjahr;
     private String halbjahr;
+    private int notenTypeToAdd;
+    private int prognoseJaNein = 0;
+
+    JButton[] halbjahrButtonGrade = new JButton[4];
+    JPanel halbjahrPanel = new JPanel();
 
     private int prognose = 0;
 
@@ -341,7 +346,6 @@ public class Gui extends JFrame {
 
     private void setupFachinfo(int fachId, int schuelerId) {
         this.remove(faecherinfo);
-        notenFrame = new JFrame();
         goBackToFaecherInfo.setBounds(this.getBounds().width - 200, userinfo.getBounds().height, 200, 50);
         goBackToFaecherInfo.addActionListener(e -> {
             this.add(faecherinfo);
@@ -349,7 +353,6 @@ public class Gui extends JFrame {
             this.remove(panelNoteSchriftlich);
             this.remove(panelNoteMuendlich);
             this.remove(panelNoteZusatz);
-            this.remove(notenFrame);
             this.remove(noteHinzufuegen);
             this.remove(noteLoeschen);
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
@@ -366,10 +369,6 @@ public class Gui extends JFrame {
         setupNoteMuendlichForFach(fachId, schuelerId);
         setupNoteZusatzForFach(fachId, schuelerId);
 
-        /*
-        panelNoteZusatz.setBounds(854, 100, 412, 570);
-        panelNoteZusatz.setBorder(new LineBorder(Color.green));
-        panelNoteZusatz.setLayout(null);*/
 
         goBackToFaecherInfo.setVisible(true);
         this.add(goBackToFaecherInfo);
@@ -391,9 +390,42 @@ public class Gui extends JFrame {
         ActionListener hinzufuegenOderLoeschenButton = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                for(ActionListener act : schriftlichButton.getActionListeners()) {
+                    schriftlichButton.removeActionListener(act);
+                }
+                for (ActionListener act : muendlichButton.getActionListeners()) {
+                    muendlichButton.removeActionListener(act);
+                }
+                for (ActionListener act : zusatzButton.getActionListeners()) {
+                    zusatzButton.removeActionListener(act);
+                }
+                schriftlichButton.addActionListener(act -> {
+                    notenTypeToAdd = 1;
+                    notenFrame.remove(schriftlichButton);
+                    notenFrame.remove(muendlichButton);
+                    notenFrame.remove(zusatzButton);
+                    noteHinzufuegen(fachId, schuelerId);
+                });
+                muendlichButton.addActionListener(act -> {
+                    notenTypeToAdd = 2;
+                    notenFrame.remove(schriftlichButton);
+                    notenFrame.remove(muendlichButton);
+                    notenFrame.remove(zusatzButton);
+                    noteHinzufuegen(fachId, schuelerId);
+                });
+                zusatzButton.addActionListener(act -> {
+                    notenTypeToAdd = 3;
+                    notenFrame.remove(schriftlichButton);
+                    notenFrame.remove(muendlichButton);
+                    notenFrame.remove(zusatzButton);
+                    noteHinzufuegen(fachId, schuelerId);
+                });
+                notenFrame = new JFrame();
                 notenFrame.setSize(250, 220);
                 notenFrame.setLayout(null);
                 notenFrame.setAlwaysOnTop(true);
+                notenFrame.dispose();
+                notenFrame.setUndecorated(true);
                 notenFrame.setLocationRelativeTo(null);
                 notenFrame.setResizable(false);
                 notenFrame.setVisible(true);
@@ -403,59 +435,158 @@ public class Gui extends JFrame {
                 notenFrame.add(schriftlichButton);
                 notenFrame.add(muendlichButton);
                 notenFrame.add(zusatzButton);
-
-                if (e.getSource() == noteHinzufuegen) {
-                    noteHinzufuegen();
-                } else if (e.getSource() == noteLoeschen) {
-                    noteLoeschen();
-                }
             }
         };
         noteHinzufuegen.addActionListener(hinzufuegenOderLoeschenButton);
-        noteLoeschen.addActionListener(hinzufuegenOderLoeschenButton);
+        noteLoeschen.addActionListener(e -> {
+            noteLoeschen(fachId, schuelerId);
+        });
     }
 
-    private void noteHinzufuegen() {
-
-
-        ActionListener buttonsListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                notenFrame.setVisible(false);
-                String[] HalbjahrToChoose = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
-                String getHalbjahr = (String) optionpane.showInputDialog(
-                        null,
-                        "Welches Halbjahr möchtest du auswählen ?",
-                        "Halbjahr auswählen",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        HalbjahrToChoose,
-                        HalbjahrToChoose[3]);
-                halbjahr = getHalbjahr;
-
+    private void noteLoeschen(int fachId, int schuelerId) {
+        JFrame deleteGrade = new JFrame();
+        JTextField enterField = new JTextField();
+        JButton enter = new JButton("Eingabe");
+        enter.addActionListener(e -> {
+            if(enterField.getText() != null) {
+                db.removeNote(Integer.parseInt(enterField.getText()));
+                deleteGrade.dispose();
+                panelNoteSchriftlich.removeAll();
+                panelNoteMuendlich.removeAll();
+                panelNoteZusatz.removeAll();
+                setupNoteSchriftlichForFach(fachId, schuelerId);
+                setupNoteMuendlichForFach(fachId, schuelerId);
+                setupNoteZusatzForFach(fachId, schuelerId);
             }
-        };
+        });
+        JButton cancel = new JButton("Abbrechen");
+        cancel.addActionListener(e -> {
+            deleteGrade.dispose();
+            panelNoteSchriftlich.removeAll();
+            panelNoteMuendlich.removeAll();
+            panelNoteZusatz.removeAll();
+            setupNoteSchriftlichForFach(fachId, schuelerId);
+            setupNoteMuendlichForFach(fachId, schuelerId);
+            setupNoteZusatzForFach(fachId, schuelerId);
+        });
 
-        schriftlichButton.addActionListener(buttonsListener);
-        muendlichButton.addActionListener(buttonsListener);
-        zusatzButton.addActionListener(buttonsListener);
+        deleteGrade.setSize(250, 220);
+        deleteGrade.setLayout(new GridLayout(4,1));
+        deleteGrade.setAlwaysOnTop(true);
+        deleteGrade.setLocationRelativeTo(null);
+        deleteGrade.setResizable(false);
+        deleteGrade.setVisible(true);
 
-        if (halbjahr == "1. Halbjahr") {
-            choosedHalbjahr = 1;
-        } else if (halbjahr == "2. Halbjahr") {
-            choosedHalbjahr = 2;
-        } else if (halbjahr == "3. Halbjahr") {
-            choosedHalbjahr = 3;
-        } else if (halbjahr == "4. Halbjahr") {
-            choosedHalbjahr = 4;
-        }
-
-
-
+        deleteGrade.add(new JLabel("Noten ID Eingeben:"));
+        deleteGrade.add(enterField);
+        deleteGrade.add(enter);
+        deleteGrade.add(cancel);
     }
 
-    private void noteLoeschen() {
+    private void noteHinzufuegen(int fachId, int schuelerId) {
+        notenFrame.dispose();
+        notenFrame = new JFrame();
+        notenFrame.setSize(250, 220);
+        notenFrame.setLayout(null);
+        notenFrame.setAlwaysOnTop(true);
+        notenFrame.setLocationRelativeTo(null);
+        notenFrame.setUndecorated(true);
+        notenFrame.setResizable(false);
+        notenFrame.setVisible(true);
+        halbjahrPanel.setBounds(0,0,250,220);
+        halbjahrPanel.setVisible(true);
+        notenFrame.add(halbjahrPanel);
+        halbjahrButtonGrade[0] = new JButton("1. Halbjahr");
+        halbjahrButtonGrade[1] = new JButton("2. Halbjahr");
+        halbjahrButtonGrade[2] = new JButton("3. Halbjahr");
+        halbjahrButtonGrade[3] = new JButton("4. Halbjahr");
+        halbjahrButtonGrade[0].addActionListener(e -> {
+            choosedHalbjahr = 1;
+            addGradeWindow(fachId, schuelerId);
+        });
+        halbjahrButtonGrade[1].addActionListener(e -> {
+            choosedHalbjahr = 2;
+            addGradeWindow(fachId, schuelerId);
+            notenFrame.dispose();
+        });
+        halbjahrButtonGrade[2].addActionListener(e -> {
+            choosedHalbjahr = 3;
+            addGradeWindow(fachId, schuelerId);
+            notenFrame.dispose();
+        });
+        halbjahrButtonGrade[3].addActionListener(e -> {
+            choosedHalbjahr = 4;
+            addGradeWindow(fachId, schuelerId);
+            notenFrame.dispose();
+        });
+        halbjahrPanel.setLayout(new GridLayout(4,1));
+        halbjahrPanel.add(halbjahrButtonGrade[0]);
+        halbjahrPanel.add(halbjahrButtonGrade[1]);
+        halbjahrPanel.add(halbjahrButtonGrade[2]);
+        halbjahrPanel.add(halbjahrButtonGrade[3]);
+        halbjahrPanel.updateUI();
+    }
 
+    private void addGradeWindow(int fachId, int schuelerId) {
+        JFrame addGradeWindow = new JFrame();
+        addGradeWindow.setSize(250, 220);
+        addGradeWindow.setLayout(new GridLayout(6,1));
+        addGradeWindow.setAlwaysOnTop(true);
+        addGradeWindow.setLocationRelativeTo(null);
+        addGradeWindow.setResizable(false);
+        addGradeWindow.setVisible(true);
+
+        JTextField enterField = new JTextField();
+        JCheckBox prognoseJaNeinBox = new JCheckBox();
+        prognoseJaNeinBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    prognoseJaNein = 1;
+                } else {
+                    prognoseJaNein = 0;
+                }
+            }
+        });
+        JButton enter = new JButton("Eingabe");
+        enter.addActionListener(e -> {
+            if(Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
+                db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
+                addGradeWindow.dispose();
+                panelNoteSchriftlich.removeAll();
+                panelNoteMuendlich.removeAll();
+                panelNoteZusatz.removeAll();
+                for(ActionListener act : schriftlichButton.getActionListeners()) {
+                    schriftlichButton.removeActionListener(act);
+                }
+                for(ActionListener act : muendlichButton.getActionListeners()) {
+                    muendlichButton.removeActionListener(act);
+                }
+                for(ActionListener act : zusatzButton.getActionListeners()) {
+                    zusatzButton.removeActionListener(act);
+                }
+                setupNoteSchriftlichForFach(fachId, schuelerId);
+                setupNoteMuendlichForFach(fachId, schuelerId);
+                setupNoteZusatzForFach(fachId, schuelerId);
+            }
+        });
+        JButton cancel = new JButton("Abbrechen");
+        cancel.addActionListener(e -> {
+            addGradeWindow.dispose();
+            panelNoteSchriftlich.removeAll();
+            panelNoteMuendlich.removeAll();
+            panelNoteZusatz.removeAll();
+            setupNoteSchriftlichForFach(fachId, schuelerId);
+            setupNoteMuendlichForFach(fachId, schuelerId);
+            setupNoteZusatzForFach(fachId, schuelerId);
+        });
+
+        addGradeWindow.add(new JLabel("Noten Eingeben:"));
+        addGradeWindow.add(enterField);
+        addGradeWindow.add(new JLabel("Prognose:"));
+        addGradeWindow.add(prognoseJaNeinBox);
+        addGradeWindow.add(enter);
+        addGradeWindow.add(cancel);
     }
 
     private void setupNoteSchriftlichForFach(int fachId, int schuelerId) {
@@ -592,7 +723,6 @@ public class Gui extends JFrame {
         this.add(panelNoteZusatz);
         panelNoteZusatz.updateUI();
     }
-
 
     private int getActualHalbjahr() {
         return actualHalbjahr;
