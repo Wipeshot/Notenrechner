@@ -55,7 +55,7 @@ public class Database {
      * @param schuelerId - Id of the student
      * @return - Average written grade
      */
-    public float getAvgNoteSchriftlich(int fachId, int schuelerId, int halbjahr, int prognose) {
+    public int getAvgNoteSchriftlich(int fachId, int schuelerId, int halbjahr, int prognose) {
         String avgNote;
         if(prognose == 0) {
             avgNote = "SELECT AVG (note)\n"
@@ -85,7 +85,7 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            return rs.getFloat(1);
+            return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return 0;
@@ -179,7 +179,7 @@ public class Database {
      * @param halbjahr - half year (1/2)
      * @return - ArrayList of oral grades as Integer
      */
-    public float getAvgNoteMuendlich(int fachId, int schuelerId, int halbjahr, int prognose) {
+    public int getAvgNoteMuendlich(int fachId, int schuelerId, int halbjahr, int prognose) {
         String avgNote;
         if(prognose == 0) {
             avgNote = "SELECT AVG (note)\n"
@@ -209,7 +209,7 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            return rs.getFloat(1);
+            return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return 0;
@@ -249,7 +249,7 @@ public class Database {
      * @param halbjahr - half year (1/2)
      * @return - Average extra grades
      */
-    public float getAvgNoteZusatz(int fachId, int schuelerId, int halbjahr, int prognose) {
+    public int getAvgNoteZusatz(int fachId, int schuelerId, int halbjahr, int prognose) {
         String avgNote;
         if(prognose == 0) {
             avgNote = "SELECT AVG (note)\n"
@@ -279,7 +279,7 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            return rs.getFloat(1);
+            return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return 0;
@@ -394,14 +394,16 @@ public class Database {
     /**
      * @param noteid - Id from the grade that you need to delete
      */
-    public void removeNote(int noteid){
+    public void removeNote(int noteid, int schuelerid){
         String removeNote = "DELETE\n"
                 + "FROM note\n"
-                + "WHERE notenid = ?"
+                + "WHERE notenid = ?\n"
+                + "AND schuelerId = ?"
                 + ";";
         try (Connection conn = DriverManager.getConnection(url)) {
             pstmt = conn.prepareStatement(removeNote);
             pstmt.setInt(1, noteid);
+            pstmt.setInt(2, schuelerid);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

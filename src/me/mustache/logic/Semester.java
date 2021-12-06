@@ -16,7 +16,7 @@ public class Semester {
             int aktuellesSemester = semester.get(0);
 
             for (int i = 1; i < semester.size(); i++) {
-                if (i > aktuellesSemester) aktuellesSemester = i;
+                if (semester.get(i) > aktuellesSemester) aktuellesSemester = semester.get(i);
             }
             return aktuellesSemester;
         } catch (Exception e) {

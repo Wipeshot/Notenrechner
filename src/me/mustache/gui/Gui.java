@@ -449,14 +449,16 @@ public class Gui extends JFrame {
         JButton enter = new JButton("Eingabe");
         enter.addActionListener(e -> {
             if(enterField.getText() != null) {
-                db.removeNote(Integer.parseInt(enterField.getText()));
-                deleteGrade.dispose();
-                panelNoteSchriftlich.removeAll();
-                panelNoteMuendlich.removeAll();
-                panelNoteZusatz.removeAll();
-                setupNoteSchriftlichForFach(fachId, schuelerId);
-                setupNoteMuendlichForFach(fachId, schuelerId);
-                setupNoteZusatzForFach(fachId, schuelerId);
+                if(enterField.getText() != null) {
+                    db.removeNote(Integer.parseInt(enterField.getText()), schuelerId);
+                    deleteGrade.dispose();
+                    panelNoteSchriftlich.removeAll();
+                    panelNoteMuendlich.removeAll();
+                    panelNoteZusatz.removeAll();
+                    setupNoteSchriftlichForFach(fachId, schuelerId);
+                    setupNoteMuendlichForFach(fachId, schuelerId);
+                    setupNoteZusatzForFach(fachId, schuelerId);
+                }
             }
         });
         JButton cancel = new JButton("Abbrechen");
@@ -503,20 +505,29 @@ public class Gui extends JFrame {
         halbjahrButtonGrade[0].addActionListener(e -> {
             choosedHalbjahr = 1;
             addGradeWindow(fachId, schuelerId);
+            halbjahrPanel.removeAll();
+            halbjahrPanel.revalidate();
+            notenFrame.dispose();
         });
         halbjahrButtonGrade[1].addActionListener(e -> {
             choosedHalbjahr = 2;
             addGradeWindow(fachId, schuelerId);
+            halbjahrPanel.removeAll();
+            halbjahrPanel.revalidate();
             notenFrame.dispose();
         });
         halbjahrButtonGrade[2].addActionListener(e -> {
             choosedHalbjahr = 3;
             addGradeWindow(fachId, schuelerId);
+            halbjahrPanel.removeAll();
+            halbjahrPanel.revalidate();
             notenFrame.dispose();
         });
         halbjahrButtonGrade[3].addActionListener(e -> {
             choosedHalbjahr = 4;
             addGradeWindow(fachId, schuelerId);
+            halbjahrPanel.removeAll();
+            halbjahrPanel.revalidate();
             notenFrame.dispose();
         });
         halbjahrPanel.setLayout(new GridLayout(4,1));
@@ -551,23 +562,25 @@ public class Gui extends JFrame {
         JButton enter = new JButton("Eingabe");
         enter.addActionListener(e -> {
             if(Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
-                db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
-                addGradeWindow.dispose();
-                panelNoteSchriftlich.removeAll();
-                panelNoteMuendlich.removeAll();
-                panelNoteZusatz.removeAll();
-                for(ActionListener act : schriftlichButton.getActionListeners()) {
-                    schriftlichButton.removeActionListener(act);
+                if(enterField.getText() != null) {
+                    db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
+                    addGradeWindow.dispose();
+                    panelNoteSchriftlich.removeAll();
+                    panelNoteMuendlich.removeAll();
+                    panelNoteZusatz.removeAll();
+                    for (ActionListener act : schriftlichButton.getActionListeners()) {
+                        schriftlichButton.removeActionListener(act);
+                    }
+                    for (ActionListener act : muendlichButton.getActionListeners()) {
+                        muendlichButton.removeActionListener(act);
+                    }
+                    for (ActionListener act : zusatzButton.getActionListeners()) {
+                        zusatzButton.removeActionListener(act);
+                    }
+                    setupNoteSchriftlichForFach(fachId, schuelerId);
+                    setupNoteMuendlichForFach(fachId, schuelerId);
+                    setupNoteZusatzForFach(fachId, schuelerId);
                 }
-                for(ActionListener act : muendlichButton.getActionListeners()) {
-                    muendlichButton.removeActionListener(act);
-                }
-                for(ActionListener act : zusatzButton.getActionListeners()) {
-                    zusatzButton.removeActionListener(act);
-                }
-                setupNoteSchriftlichForFach(fachId, schuelerId);
-                setupNoteMuendlichForFach(fachId, schuelerId);
-                setupNoteZusatzForFach(fachId, schuelerId);
             }
         });
         JButton cancel = new JButton("Abbrechen");
