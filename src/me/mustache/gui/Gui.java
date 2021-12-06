@@ -8,6 +8,7 @@ import me.mustache.logic.Semester;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -17,6 +18,10 @@ public class Gui extends JFrame {
 
     private int actualHalbjahr;
     private boolean halbjahrFrameBool = false;
+    private boolean hinzufuegen = false;
+    private boolean loeschen = false;
+    private int choosedHalbjahr;
+    private String halbjahr;
 
     private int prognose = 0;
 
@@ -84,6 +89,7 @@ public class Gui extends JFrame {
     private JLabel noteTopper;
     private JLabel semesterTopper;
     private JLabel prognoseTopper;
+    private JOptionPane optionpane = new JOptionPane();
 
     public Gui() {
         this.setSize(1280, 720);
@@ -380,96 +386,86 @@ public class Gui extends JFrame {
 
     private void setupListenerAddRemoveButton(int fachId, int schuelerId) {
         noteHinzufuegen.setBounds(0, 50, 200, 50);
-        noteHinzufuegen.addActionListener(e -> {
-            notenFrame.setTitle("Note hinzufügen");
-            notenFrame.setSize(250, 220);
-            notenFrame.setLayout(null);
-            notenFrame.setAlwaysOnTop(true);
-            notenFrame.setLocationRelativeTo(null);
-            notenFrame.setResizable(false);
-            notenFrame.setVisible(true);
-            schriftlichButton.setBounds(0, 0, 250, 60);
-            muendlichButton.setBounds(0, 61, 250, 60);
-            zusatzButton.setBounds(0, 122, 250, 60);
-            notenFrame.add(schriftlichButton);
-            notenFrame.add(muendlichButton);
-            notenFrame.add(zusatzButton);
-        });
-
         noteLoeschen.setBounds(201, 50, 200, 50);
-        noteLoeschen.addActionListener(e -> {
 
-            notenFrame.setTitle("Note löschen");
-            notenFrame.setSize(250, 220);
-            notenFrame.setLayout(null);
-            notenFrame.setAlwaysOnTop(true);
-            notenFrame.setLocationRelativeTo(null);
-            notenFrame.setResizable(false);
-            notenFrame.setVisible(true);
-            schriftlichButton.setBounds(0, 0, 250, 60);
-            muendlichButton.setBounds(0, 61, 250, 60);
-            zusatzButton.setBounds(0, 122, 250, 60);
-            notenFrame.add(schriftlichButton);
-            notenFrame.add(muendlichButton);
-            notenFrame.add(zusatzButton);
+        ActionListener hinzufuegenOderLoeschenButton = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                notenFrame.setSize(250, 220);
+                notenFrame.setLayout(null);
+                notenFrame.setAlwaysOnTop(true);
+                notenFrame.setLocationRelativeTo(null);
+                notenFrame.setResizable(false);
+                notenFrame.setVisible(true);
+                schriftlichButton.setBounds(0, 0, 250, 60);
+                muendlichButton.setBounds(0, 61, 250, 60);
+                zusatzButton.setBounds(0, 122, 250, 60);
+                notenFrame.add(schriftlichButton);
+                notenFrame.add(muendlichButton);
+                notenFrame.add(zusatzButton);
 
+                if (e.getSource() == noteHinzufuegen) {
+                    noteHinzufuegen();
+                } else if (e.getSource() == noteLoeschen) {
+                    noteLoeschen();
+                }
+            }
+        };
+        noteHinzufuegen.addActionListener(hinzufuegenOderLoeschenButton);
+        noteLoeschen.addActionListener(hinzufuegenOderLoeschenButton);
+    }
 
-        });
-
-        schriftlichButton.addActionListener(e -> {
-            notenFrame.setVisible(false);
-            String[] HalbjahrToChooseSchriftlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
-            String getHalbjahrSchriftlich = (String) JOptionPane.showInputDialog(
-                    null,
-                    "Welches Halbjahr möchtest du auswählen ?",
-                    "Halbjahr auswählen",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    HalbjahrToChooseSchriftlich,
-                    HalbjahrToChooseSchriftlich[3]);
-
+    private void noteHinzufuegen() {
 
 
-        });
+        ActionListener buttonsListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                notenFrame.setVisible(false);
+                String[] HalbjahrToChoose = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
+                String getHalbjahr = (String) optionpane.showInputDialog(
+                        null,
+                        "Welches Halbjahr möchtest du auswählen ?",
+                        "Halbjahr auswählen",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        HalbjahrToChoose,
+                        HalbjahrToChoose[3]);
+                halbjahr = getHalbjahr;
 
-        muendlichButton.addActionListener(e -> {
-            notenFrame.setVisible(false);
-            String[] HalbjahrToChooseMuendlich = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
-            String getHalbjahrMuendlich = (String) JOptionPane.showInputDialog(
-                    null,
-                    "Welches Halbjahr möchtest du auswählen ?",
-                    "Halbjahr auswählen",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    HalbjahrToChooseMuendlich,
-                    HalbjahrToChooseMuendlich[3]);
+            }
+        };
 
-        });
+        schriftlichButton.addActionListener(buttonsListener);
+        muendlichButton.addActionListener(buttonsListener);
+        zusatzButton.addActionListener(buttonsListener);
 
-        zusatzButton.addActionListener(e -> {
-            notenFrame.setVisible(false);
-            //TODO Notenframe bleibt beim Entfernen trotzdem noch da wenn man einmal zum userscreen wechselt und wieder zurück (Zeile:419,404,387)
-            String[] HalbjahrToChooseZusatz = {"1. Halbjahr", "2. Halbjahr", "3. Halbjahr", "4. Halbjahr"};
-            String getHalbjahrZusatz = (String) JOptionPane.showInputDialog(
-                    null,
-                    "Welches Halbjahr möchtest du auswählen ?",
-                    "Halbjahr auswählen",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    HalbjahrToChooseZusatz,
-                    HalbjahrToChooseZusatz[3]);
+        if (halbjahr == "1. Halbjahr") {
+            choosedHalbjahr = 1;
+        } else if (halbjahr == "2. Halbjahr") {
+            choosedHalbjahr = 2;
+        } else if (halbjahr == "3. Halbjahr") {
+            choosedHalbjahr = 3;
+        } else if (halbjahr == "4. Halbjahr") {
+            choosedHalbjahr = 4;
+        }
 
-        });
+
+
+    }
+
+    private void noteLoeschen() {
+
     }
 
     private void setupNoteSchriftlichForFach(int fachId, int schuelerId) {
-        ArrayList<Integer> notenIdSchriftlich = db.getNotenId(fachId, schuelerId,1);
+        ArrayList<Integer> notenIdSchriftlich = db.getNotenId(fachId, schuelerId, 1);
         ArrayList<Integer> notenSchriftlichList = db.getNotenSchriftlich(fachId, schuelerId);
-        panelNoteSchriftlich.setBounds(0, 100, 426, 30*notenIdSchriftlich.size()+30);
+        panelNoteSchriftlich.setBounds(0, 100, 426, 30 * notenIdSchriftlich.size() + 30);
         panelNoteSchriftlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteSchriftlich.setLayout(new GridLayout(notenIdSchriftlich.size()+1, 4));
+        panelNoteSchriftlich.setLayout(new GridLayout(notenIdSchriftlich.size() + 1, 4));
         panelNoteSchriftlich.setVisible(true);
-        schriftlichSchriftzug.setBounds(0,100,426,30);
+        schriftlichSchriftzug.setBounds(0, 100, 426, 30);
         idTopper = new JLabel("ID");
         noteTopper = new JLabel("Note");
         semesterTopper = new JLabel("Halbjahr");
@@ -481,7 +477,7 @@ public class Gui extends JFrame {
 
         schriftlichNotenId = new JLabel[notenSchriftlichList.size()];
         schriftlichEinzelNoten = new JLabel[notenSchriftlichList.size()];
-        schriftlichNoteSemester = new  JLabel[notenSchriftlichList.size()];
+        schriftlichNoteSemester = new JLabel[notenSchriftlichList.size()];
         schriftlichPrognose = new JLabel[notenSchriftlichList.size()];
 
         for (int i = 0; i < notenSchriftlichList.size(); i++) {
@@ -508,11 +504,11 @@ public class Gui extends JFrame {
     }
 
     private void setupNoteMuendlichForFach(int fachId, int schuelerId) {
-        ArrayList<Integer> notenIdMuendlich = db.getNotenId(fachId, schuelerId,2);
+        ArrayList<Integer> notenIdMuendlich = db.getNotenId(fachId, schuelerId, 2);
         ArrayList<Integer> notenMuendlichList = db.getNotenMuendlich(fachId, schuelerId);
-        panelNoteMuendlich.setBounds(427, 100, 426, 30*notenIdMuendlich.size()+30);
+        panelNoteMuendlich.setBounds(427, 100, 426, 30 * notenIdMuendlich.size() + 30);
         panelNoteMuendlich.setBorder(new LineBorder(Color.GREEN));
-        panelNoteMuendlich.setLayout(new GridLayout(notenIdMuendlich.size()+1, 4));
+        panelNoteMuendlich.setLayout(new GridLayout(notenIdMuendlich.size() + 1, 4));
         panelNoteMuendlich.setVisible(true);
         idTopper = new JLabel("ID");
         noteTopper = new JLabel("Note");
@@ -526,7 +522,7 @@ public class Gui extends JFrame {
 
         muendlichNotenId = new JLabel[notenMuendlichList.size()];
         muendlichEinzelNoten = new JLabel[notenMuendlichList.size()];
-        muendlichNoteSemester = new  JLabel[notenMuendlichList.size()];
+        muendlichNoteSemester = new JLabel[notenMuendlichList.size()];
         muendlichPrognose = new JLabel[notenMuendlichList.size()];
 
         for (int i = 0; i < notenMuendlichList.size(); i++) {
@@ -553,11 +549,11 @@ public class Gui extends JFrame {
     }
 
     private void setupNoteZusatzForFach(int fachId, int schuelerId) {
-        ArrayList<Integer> notenIdZusatz = db.getNotenId(fachId, schuelerId,3);
+        ArrayList<Integer> notenIdZusatz = db.getNotenId(fachId, schuelerId, 3);
         ArrayList<Integer> notenZusatzList = db.getNotenZusatz(fachId, schuelerId);
-        panelNoteZusatz.setBounds(854, 100, 426, 30*notenIdZusatz.size()+30);
+        panelNoteZusatz.setBounds(854, 100, 426, 30 * notenIdZusatz.size() + 30);
         panelNoteZusatz.setBorder(new LineBorder(Color.GREEN));
-        panelNoteZusatz.setLayout(new GridLayout(notenIdZusatz.size()+1, 4));
+        panelNoteZusatz.setLayout(new GridLayout(notenIdZusatz.size() + 1, 4));
         panelNoteZusatz.setVisible(true);
         idTopper = new JLabel("ID");
         noteTopper = new JLabel("Note");
@@ -571,7 +567,7 @@ public class Gui extends JFrame {
 
         zusatzNotenId = new JLabel[notenZusatzList.size()];
         zusatzEinzelNoten = new JLabel[notenZusatzList.size()];
-        zusatzNoteSemester = new  JLabel[notenZusatzList.size()];
+        zusatzNoteSemester = new JLabel[notenZusatzList.size()];
         zusatzPrognose = new JLabel[notenZusatzList.size()];
 
         for (int i = 0; i < notenZusatzList.size(); i++) {
