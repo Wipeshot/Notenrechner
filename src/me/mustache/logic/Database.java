@@ -85,7 +85,6 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            System.out.println(rs.getFloat(1));
             return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -210,7 +209,6 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            System.out.println(rs.getFloat(1));
             return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -281,7 +279,6 @@ public class Database {
                 pstmt.setInt(5, prognose);
             }
             ResultSet rs = pstmt.executeQuery();
-            System.out.println(rs.getFloat(1));
             return (int)(rs.getFloat(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
