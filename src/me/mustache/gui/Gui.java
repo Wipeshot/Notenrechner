@@ -301,6 +301,7 @@ public class Gui extends JFrame {
             faecherinfo.add(wertung[i]);
             faecherinfo.add(fachansicht[i]);
         }
+        faecherinfo.updateUI();
     }
 
     private void reloadNoten(int schuelerid) {
@@ -448,17 +449,18 @@ public class Gui extends JFrame {
         JTextField enterField = new JTextField();
         JButton enter = new JButton("Eingabe");
         enter.addActionListener(e -> {
-            if(enterField.getText() != null) {
-                if(enterField.getText() != null) {
-                    db.removeNote(Integer.parseInt(enterField.getText()), schuelerId);
-                    deleteGrade.dispose();
-                    panelNoteSchriftlich.removeAll();
-                    panelNoteMuendlich.removeAll();
-                    panelNoteZusatz.removeAll();
-                    setupNoteSchriftlichForFach(fachId, schuelerId);
-                    setupNoteMuendlichForFach(fachId, schuelerId);
-                    setupNoteZusatzForFach(fachId, schuelerId);
-                }
+            try {
+                db.removeNote(Integer.parseInt(enterField.getText()), schuelerId);
+                deleteGrade.dispose();
+                panelNoteSchriftlich.removeAll();
+                panelNoteMuendlich.removeAll();
+                panelNoteZusatz.removeAll();
+                setupNoteSchriftlichForFach(fachId, schuelerId);
+                setupNoteMuendlichForFach(fachId, schuelerId);
+                setupNoteZusatzForFach(fachId, schuelerId);
+            } catch (Exception exception) {
+                System.out.println(exception);
+                enterField.setBackground(Color.RED);
             }
         });
         JButton cancel = new JButton("Abbrechen");
@@ -561,8 +563,8 @@ public class Gui extends JFrame {
         });
         JButton enter = new JButton("Eingabe");
         enter.addActionListener(e -> {
-            if(Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
-                if(enterField.getText() != null) {
+            try {
+                if (Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
                     db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
                     addGradeWindow.dispose();
                     panelNoteSchriftlich.removeAll();
@@ -581,6 +583,9 @@ public class Gui extends JFrame {
                     setupNoteMuendlichForFach(fachId, schuelerId);
                     setupNoteZusatzForFach(fachId, schuelerId);
                 }
+            } catch (Exception exception) {
+                System.out.println(exception);
+                enterField.setBackground(Color.RED);
             }
         });
         JButton cancel = new JButton("Abbrechen");

@@ -37,7 +37,6 @@ public class Notenrechner {
         wertung[2] = db.getWertungZusatz(fachId, db.getKlasseIdBySchuelerId(schuelerId));
 
         grade = (int)(note[0]*wertung[0]+note[1]*wertung[1]+note[2]*wertung[2]);
-
         return grade;
     }
 
@@ -48,10 +47,10 @@ public class Notenrechner {
     public int calculateAvgGrade(int schuelerId, int halbjahr, int prognose){
         ArrayList<Integer> faecherId = db.getFaecherIdBySchuelerId(schuelerId);
         for (int i = 0; getAnzFaecherBySchuelerId(schuelerId) > i; i++){
-            avgGrade = calculateGrades(faecherId.get(i), schuelerId, halbjahr, prognose) + avgGrade;
+            avgGrade += calculateGrades(faecherId.get(i), schuelerId, halbjahr, prognose);
         }
         avgGrade = avgGrade/getAnzFaecherBySchuelerId(schuelerId);
-        return (int)(avgGrade);
+        return avgGrade;
     }
 
     public int getAnzFaecherBySchuelerId(int schuelerId){
