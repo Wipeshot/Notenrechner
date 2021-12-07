@@ -359,6 +359,7 @@ public class Gui extends JFrame {
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
+            reloadNoten(schuelerId);
             panelNoteSchriftlich.removeAll();
             panelNoteMuendlich.removeAll();
             panelNoteZusatz.removeAll();
