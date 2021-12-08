@@ -306,7 +306,7 @@ public class Gui extends JFrame {
 
     private void reloadNoten(int schuelerid) {
         ArrayList<Integer> faecherIds = db.getFaecherIdBySchuelerId(schuelerid);
-
+        notenFrame.dispose();
         for (int i = 0; i < nr.getAnzFaecherBySchuelerId(schuelerid); i++) {
             fach[i].setText(db.getFachById(faecherIds.get(i)));
             schriftlich[i].setText(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerid, actualHalbjahr, prognose)));
@@ -543,6 +543,7 @@ public class Gui extends JFrame {
 
     private void addGradeWindow(int fachId, int schuelerId) {
         JFrame addGradeWindow = new JFrame();
+        notenFrame.dispose();
         addGradeWindow.setSize(250, 220);
         addGradeWindow.setLayout(new GridLayout(6,1));
         addGradeWindow.setAlwaysOnTop(true);
@@ -564,28 +565,32 @@ public class Gui extends JFrame {
         });
         JButton enter = new JButton("Eingabe");
         enter.addActionListener(e -> {
-            try {
-                if (Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
-                    db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
-                    addGradeWindow.dispose();
-                    panelNoteSchriftlich.removeAll();
-                    panelNoteMuendlich.removeAll();
-                    panelNoteZusatz.removeAll();
-                    for (ActionListener act : schriftlichButton.getActionListeners()) {
-                        schriftlichButton.removeActionListener(act);
+            if((Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0)) {
+                try {
+                    if (Integer.parseInt(enterField.getText()) <= 15 && Integer.parseInt(enterField.getText()) >= 0) {
+                        db.addNote(Integer.parseInt(enterField.getText()), notenTypeToAdd, fachId, schuelerId, choosedHalbjahr, prognoseJaNein);
+                        addGradeWindow.dispose();
+                        panelNoteSchriftlich.removeAll();
+                        panelNoteMuendlich.removeAll();
+                        panelNoteZusatz.removeAll();
+                        for (ActionListener act : schriftlichButton.getActionListeners()) {
+                            schriftlichButton.removeActionListener(act);
+                        }
+                        for (ActionListener act : muendlichButton.getActionListeners()) {
+                            muendlichButton.removeActionListener(act);
+                        }
+                        for (ActionListener act : zusatzButton.getActionListeners()) {
+                            zusatzButton.removeActionListener(act);
+                        }
+                        setupNoteSchriftlichForFach(fachId, schuelerId);
+                        setupNoteMuendlichForFach(fachId, schuelerId);
+                        setupNoteZusatzForFach(fachId, schuelerId);
                     }
-                    for (ActionListener act : muendlichButton.getActionListeners()) {
-                        muendlichButton.removeActionListener(act);
-                    }
-                    for (ActionListener act : zusatzButton.getActionListeners()) {
-                        zusatzButton.removeActionListener(act);
-                    }
-                    setupNoteSchriftlichForFach(fachId, schuelerId);
-                    setupNoteMuendlichForFach(fachId, schuelerId);
-                    setupNoteZusatzForFach(fachId, schuelerId);
+                } catch (Exception exception) {
+                    System.out.println(exception);
+                    enterField.setBackground(Color.RED);
                 }
-            } catch (Exception exception) {
-                System.out.println(exception);
+            } else {
                 enterField.setBackground(Color.RED);
             }
         });
