@@ -306,7 +306,7 @@ public class Gui extends JFrame {
 
     private void reloadNoten(int schuelerid) {
         ArrayList<Integer> faecherIds = db.getFaecherIdBySchuelerId(schuelerid);
-        notenFrame.dispose();
+        //notenFrame.dispose();
         for (int i = 0; i < nr.getAnzFaecherBySchuelerId(schuelerid); i++) {
             fach[i].setText(db.getFachById(faecherIds.get(i)));
             schriftlich[i].setText(String.valueOf(db.getAvgNoteSchriftlich(faecherIds.get(i), schuelerid, actualHalbjahr, prognose)));
@@ -359,7 +359,7 @@ public class Gui extends JFrame {
             for (ActionListener act : goBackToFaecherInfo.getActionListeners()) {
                 goBackToFaecherInfo.removeActionListener(act);
             }
-            reloadNoten(schuelerId);
+            //reloadNoten(schuelerId);
             panelNoteSchriftlich.removeAll();
             panelNoteMuendlich.removeAll();
             panelNoteZusatz.removeAll();
